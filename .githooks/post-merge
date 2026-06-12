@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Replaces author-specific absolute paths introduced by upstream syncs.
+# Runs automatically after every git pull / git merge.
+
+FILES=(
+  "profile-al-development/.mcp.json"
+  "profile-al-development/bctb-config.json"
+  "profile-al-development/README.md"
+)
+
+CHANGED=0
+for f in "${FILES[@]}"; do
+  if grep -q '/home/stefan/claude-configs' "$f" 2>/dev/null; then
+    sed -i 's|/home/stefan/claude-configs|~/claude-configs|g' "$f"
+    echo "fix-upstream-paths: patched $f"
+    CHANGED=1
+  fi
+done
+
+if [ "$CHANGED" -eq 0 ]; then
+  echo "fix-upstream-paths: nothing to patch"
+fi

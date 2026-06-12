@@ -31,7 +31,7 @@ In your AL project's `.claude/settings.json`:
     "my-configs": {
       "source": {
         "source": "directory",
-        "path": "/home/stefan/claude-configs"
+        "path": "~/claude-configs"
       }
     }
   },
@@ -411,7 +411,7 @@ In your project's `.claude/CLAUDE.md`:
 ## Custom Prefix
 - All objects: `ACME`
 
-@/home/stefan/claude-configs/profile-al-development/CLAUDE.md
+@~/claude-configs/profile-al-development/CLAUDE.md
 ```
 
 The `@` import loads the profile, your settings augment it.
