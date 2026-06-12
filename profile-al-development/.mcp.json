@@ -25,8 +25,8 @@
     },
     "bc-telemetry-buddy": {
       "type": "stdio",
-      "command": "bctb-mcp",
-      "args": ["start", "--config", "~/claude-configs/profile-al-development/bctb-config.json"],
+      "command": "bash",
+      "args": ["-c", "bctb-mcp start --config ~/claude-configs/profile-al-development/bctb-config.json"],
       "env": {}
     }
   }

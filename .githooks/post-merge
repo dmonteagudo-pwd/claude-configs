@@ -1,22 +1,52 @@
 #!/usr/bin/env bash
-# Replaces author-specific absolute paths introduced by upstream syncs.
-# Runs automatically after every git pull / git merge.
+# Normalizes upstream author-specific config after every git pull / git merge.
+# Handles:
+#   1. /home/stefan/claude-configs -> ~/claude-configs (absolute paths)
+#   2. bctb-mcp args: wraps with bash -c so ~ expands on Windows
 
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+MCP_JSON="$REPO_ROOT/profile-al-development/.mcp.json"
+
+# ── 1. Replace /home/stefan absolute paths ──────────────────────────────────
 FILES=(
-  "profile-al-development/.mcp.json"
-  "profile-al-development/bctb-config.json"
-  "profile-al-development/README.md"
+  "$MCP_JSON"
+  "$REPO_ROOT/profile-al-development/bctb-config.json"
+  "$REPO_ROOT/profile-al-development/README.md"
 )
 
-CHANGED=0
 for f in "${FILES[@]}"; do
   if grep -q '/home/stefan/claude-configs' "$f" 2>/dev/null; then
     sed -i 's|/home/stefan/claude-configs|~/claude-configs|g' "$f"
-    echo "fix-upstream-paths: patched $f"
-    CHANGED=1
+    echo "fix-upstream-paths: patched absolute paths in $f"
   fi
 done
 
-if [ "$CHANGED" -eq 0 ]; then
-  echo "fix-upstream-paths: nothing to patch"
+# ── 2. Fix bc-telemetry-buddy: use bash -c so ~ expands on Windows ───────────
+if grep -q '"command": "bctb-mcp"' "$MCP_JSON" 2>/dev/null; then
+  # Replace the bctb-mcp entry with the bash -c wrapper
+  python3 - "$MCP_JSON" <<'PYEOF'
+import json, sys
+path = sys.argv[1]
+with open(path) as f:
+    cfg = json.load(f)
+srv = cfg.get("mcpServers", {})
+if "bc-telemetry-buddy" in srv and srv["bc-telemetry-buddy"].get("command") == "bctb-mcp":
+    config_arg = next(
+        (srv["bc-telemetry-buddy"]["args"][i+1]
+         for i, a in enumerate(srv["bc-telemetry-buddy"].get("args", []))
+         if a == "--config"),
+        "~/claude-configs/profile-al-development/bctb-config.json"
+    )
+    srv["bc-telemetry-buddy"] = {
+        "type": "stdio",
+        "command": "bash",
+        "args": ["-c", f"bctb-mcp start --config {config_arg}"],
+        "env": {}
+    }
+    with open(path, "w") as f:
+        json.dump(cfg, f, indent=2)
+    print(f"fix-upstream-paths: wrapped bctb-mcp with bash -c in {path}")
+PYEOF
 fi
