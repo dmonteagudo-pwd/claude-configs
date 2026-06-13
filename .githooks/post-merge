@@ -3,18 +3,27 @@
 # Handles:
 #   1. /home/stefan/claude-configs -> ~/claude-configs (absolute paths)
 #   2. bctb-mcp args: wraps with bash -c so ~ expands on Windows
+#   3. Linux-only / Docker-only skills removed (not applicable to Windows/Prodware)
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 MCP_JSON="$REPO_ROOT/profile-al-development/.mcp.json"
 
-# ── 0. Remove upstream Linux-only skills not applicable to Windows ───────────
-for skill in al-symbols compile; do
+# ── 0. Remove upstream Linux-only or Docker-only artefacts ───────────────────
+for skill in al-symbols compile bc-source local-bc al-mutate; do
   skill_dir="$REPO_ROOT/profile-al-development/skills/$skill"
   if [[ -d "$skill_dir" ]]; then
     rm -rf "$skill_dir"
-    echo "fix-upstream-paths: removed Linux-only skill $skill"
+    echo "fix-upstream-paths: removed Linux/Docker-only skill $skill"
+  fi
+done
+
+for backup in CLAUDE.md.v2-backup CLAUDE.md.v3-backup; do
+  backup_file="$REPO_ROOT/profile-al-development/$backup"
+  if [[ -f "$backup_file" ]]; then
+    rm -f "$backup_file"
+    echo "fix-upstream-paths: removed stale backup $backup"
   fi
 done
 
