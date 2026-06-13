@@ -1,0 +1,33 @@
+{
+  // "mcpServers": {
+  //   "microsoft_docs_mcp": {
+  //     "type": "http",
+  //     "url": "https://learn.microsoft.com/api/mcp"
+  //   },
+  //   "al-mcp-server": {
+  //     "type": "stdio",
+  //     "command": "npx",
+  //     "args": [
+  //       "al-mcp-server"
+  //     ],
+  //     "env": {}
+  //   },
+  //   "bc-code-intelligence-mcp": {
+  //     "type": "stdio",
+  //     "command": "bc-code-intelligence-mcp",
+  //     "args": [],
+  //     "env": {
+  //       "BC_CODE_INTEL_CONFIG": "~/claude-configs/profile-al-development/bc-code-intel-config.json"
+  //     }
+  //   },
+  //   "alcops": {
+  //     "command": "alcops-mcp"
+  //   },
+  //   "bc-telemetry-buddy": {
+  //     "type": "stdio",
+  //     "command": "bash",
+  //     "args": ["-c", "bctb-mcp start --config ~/claude-configs/profile-al-development/bctb-config.json"],
+  //     "env": {}
+  //   }
+  // }
+}
