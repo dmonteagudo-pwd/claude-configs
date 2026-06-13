@@ -10,6 +10,8 @@ QUEUE_FILE="/tmp/al-compile-queue-${USER:-${USERNAME:-unknown}}-${SESSION_ID:-de
 
 [[ ! -f "$QUEUE_FILE" ]] && exit 0
 
+command -v al-compile >/dev/null 2>&1 || { rm -f "$QUEUE_FILE"; exit 0; }
+
 # Deduplicate project roots
 PROJECTS=$(sort -u "$QUEUE_FILE")
 rm -f "$QUEUE_FILE"
