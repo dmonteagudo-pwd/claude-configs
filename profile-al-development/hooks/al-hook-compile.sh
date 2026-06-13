@@ -6,7 +6,7 @@ set -uo pipefail
 
 INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)
-QUEUE_FILE="/tmp/al-compile-queue-${USER}-${SESSION_ID:-default}"
+QUEUE_FILE="/tmp/al-compile-queue-${USER:-${USERNAME:-unknown}}-${SESSION_ID:-default}"
 
 [[ ! -f "$QUEUE_FILE" ]] && exit 0
 
