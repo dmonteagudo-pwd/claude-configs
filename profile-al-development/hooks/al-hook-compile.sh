@@ -5,7 +5,7 @@
 set -uo pipefail
 
 INPUT=$(cat)
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)
+SESSION_ID=$(python3 -c "import sys,json; d=json.loads(sys.argv[1]); print(d.get('session_id') or '')" "$INPUT" 2>/dev/null || true)
 QUEUE_FILE="/tmp/al-compile-queue-${USER:-${USERNAME:-unknown}}-${SESSION_ID:-default}"
 
 [[ ! -f "$QUEUE_FILE" ]] && exit 0
@@ -24,7 +24,7 @@ while IFS= read -r PROJECT_DIR; do
     [[ -z "$PROJECT_DIR" ]] && continue
     [[ ! -d "$PROJECT_DIR" ]] && continue
 
-    PROJECT_NAME=$(jq -r '.name // "unknown"' "$PROJECT_DIR/app.json" 2>/dev/null || echo "unknown")
+    PROJECT_NAME=$(python3 -c "import sys,json; d=json.load(open(sys.argv[1])); print(d.get('name','unknown'))" "$PROJECT_DIR/app.json" 2>/dev/null || echo "unknown")
 
     # al-compile --quiet writes nothing on success, and a clean error list to
     # stderr on failure. Capture stderr; let exit code drive the branching.

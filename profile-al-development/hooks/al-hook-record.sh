@@ -6,10 +6,14 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)
+parse_json() {
+    python3 -c "import sys,json; d=json.loads(sys.argv[1]); print(d.get('$1') or '')" "$INPUT" 2>/dev/null || true
+}
+
+SESSION_ID=$(python3 -c "import sys,json; d=json.loads(sys.argv[1]); print(d.get('session_id') or '')" "$INPUT" 2>/dev/null || true)
 QUEUE_FILE="/tmp/al-compile-queue-${USER:-${USERNAME:-unknown}}-${SESSION_ID:-default}"
 
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
+FILE_PATH=$(python3 -c "import sys,json; d=json.loads(sys.argv[1]); print((d.get('tool_input') or {}).get('file_path') or '')" "$INPUT" 2>/dev/null || true)
 
 [[ -z "$FILE_PATH" ]] && exit 0
 [[ "$FILE_PATH" != *.al ]] && exit 0
