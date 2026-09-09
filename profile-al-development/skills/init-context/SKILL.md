@@ -11,6 +11,8 @@ You are an engineering manager orchestrating the creation of a shared project co
 
 File: `.dev/project-context.md` (at the project root, NOT inside a task subfolder — this is shared across all workflows).
 
+Once written, apply *Large Context Split* at the end of this document. That path stays the entry point in both shapes.
+
 ## Procedure
 
 ### Step 1: Check for Existing Context
@@ -168,3 +170,41 @@ Notable calls to base app procedures and their context.
 - Follow the architectural patterns documented above; do not invent new patterns without explicit approval.
 - Check Base App Integration Points before modifying extension objects.
 ```
+
+---
+
+## Large Context Split
+
+`.dev/project-context.md` is always the entry point — every other skill in this plugin reads it by that name, so
+it is never deleted, renamed or moved. Above a size threshold it holds an **index** instead of the whole document.
+
+| Context size | Shape |
+|---|---|
+| < 40 KB (~10k tokens) | Monolithic — the template above, one file. Do not split. |
+| >= 40 KB | Split — index at `.dev/project-context.md`, one file per `##` section at `.dev/context/NN-<section>.md`. |
+| A single section > 20 KB | Split that section by its `###` subsections into two themed files (e.g. cross-cutting patterns vs. per-feature flows). |
+
+Measure bytes, not lines. Below the threshold the ~6 KB index plus an extra read per section costs more than it saves.
+
+### How to split
+
+1. Create `.dev/context/`. Move each `##` section body into its own numbered file, keeping its heading as the
+   file `#` title: `01-history.md` (the long description / decision log), `02-structure.md`, `03-objects.md`,
+   `04-patterns.md`, `05-flows.md`, `06-integration.md`, `07-locations.md`, `08-dependencies.md`,
+   `09-testing.md`, `10-changelog.md`. Give each a two-line banner linking back to the index.
+2. Rewrite `.dev/project-context.md` as the index: the *Project Overview* identity bullets, a five-line summary,
+   a **routing table** (`need to know X` → file → size), a few **load recipes** (task type → files to load), the
+   total cost of loading everything, and *Instructions for Agents* kept inline. Nothing else.
+3. Turn any "see the section above" wording inside a moved section into a link to the file that now holds it, and
+   show `.dev/context/` in the directory tree.
+4. Verify: the new files sum to slightly more than the original (banners + index only) and the object-registry row
+   count is unchanged.
+
+### Consequences for the other steps
+
+- **Step 1 (existing context)** — `.dev/context/` present means the context is already split. **Update** preserves
+  the current shape: edit the affected section files, then refresh the index's identity block and routing-table
+  sizes. **Regenerate** deletes `.dev/context/` too and re-decides the shape from the new size.
+- **Step 4 (confirm)** — report the shape, the per-file sizes, and the load cost of a bounded task versus everything.
+- **Downstream skills** that update the context (`develop`, `fix`, `plan`) append to the relevant
+  `.dev/context/NN-*.md`, never to the index — except the changelog date and version, which the index also carries.
