@@ -107,9 +107,27 @@ The servers this profile's skills and agent prompts expect come from elsewhere:
    reports `"is_set": false`. That is an unconfigured server, not a broken one — call
    `set_workspace_info` once and confirm a non-zero topic count before treating a weak reply as a
    failure.
-   - The personal knowledge layer in `bc-code-intel-knowledge/`, configured by
-     `bc-code-intel-config.json`, is **not** loaded: `profile-bc-prodware/.mcp.json` does not pass
-     `BC_CODE_INTEL_CONFIG`. Set that env var there if the layer is wanted.
+   - The personal knowledge layer in `bc-code-intel-knowledge/` is **not** loaded, and
+     `bc-code-intel-config.json` is dead weight. Measured against v1.7.6 on 2026-09-12: the
+     server reads no env var named `BC_CODE_INTEL_CONFIG` (that name, used by the old
+     `.mcp.jsonc`, does not exist), and `BC_CODE_INTEL_CONFIG_PATH` did not load the layer
+     either. Configuration is discovered **by path**, not by pointer:
+     `~/.bc-code-intel/config.{json,yaml,yml}` for the user, and
+     `<workspace_root>/.bc-code-intel/config.{json,yaml,yml}` — or the deprecated
+     `bckb-config.json` — for the project. `<workspace_root>` is what `set_workspace_info`
+     received, so the file must sit in the project, not in a plugin.
+   - A layer entry needs an explicit `source.type`; omit it and the layer is dropped with
+     `Layer source type is required`. Knowledge files must live in `domains/<domain>/<file>.md` —
+     a flat directory of `.md` files indexes zero topics. Working shape:
+
+     ```json
+     { "layers": [ { "name": "prodware", "priority": 90, "enabled": true,
+         "source": { "type": "local", "path": "<absolute path to the knowledge root>" } } ] }
+     ```
+
+     Verified: `Loaded 11534 topics from 3 layers` (embedded 11533 + 1 custom topic), and the
+     custom topic ranked first for its own query. The built-in `project` layer is separate and
+     looks for `./bc-code-intel-overrides` relative to the server's CWD, not the workspace root.
 
 2. **`microsoft-docs`** — declared by `profile-bc-prodware/.mcp.json`, HTTP against
    `https://learn.microsoft.com/api/mcp`. Tools: `microsoft_docs_search`, `microsoft_docs_fetch`,

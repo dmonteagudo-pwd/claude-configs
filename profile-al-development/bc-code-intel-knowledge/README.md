@@ -1,3 +1,6 @@
+> **Not loaded.** This layer is inert: nothing points at it. See the `_comment` in
+> `../bc-code-intel-config.json` for the discovery mechanism the server actually uses.
+
 # Personal AL Coding Standards - Knowledge Layer
 
 This directory contains personal coding standards that will be enforced across all Business Central AL development projects.

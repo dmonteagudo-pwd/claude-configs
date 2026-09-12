@@ -1,13 +1,21 @@
 {
+  "_comment": "Template for a project's .claude/settings.json. Replace BOTH marketplace paths with real absolute paths before use: Claude Code does not expand '~' on Windows, and a '~' path fails silently — the marketplace is simply never registered and the plugin never loads. profile-bc-prodware is required alongside this plugin; it supplies the MCP servers, the Prodware rules and the build command.",
   "extraKnownMarketplaces": {
-    "my-configs": {
+    "claude-configs": {
       "source": {
         "source": "directory",
-        "path": "~/claude-configs"
+        "path": "C:/Users/<you>/claude-configs"
+      }
+    },
+    "claude-configs-bc": {
+      "source": {
+        "source": "directory",
+        "path": "C:/Users/<you>/claude-configs-bc"
       }
     }
   },
   "enabledPlugins": {
-    "profile-al-development@my-configs": true
+    "profile-al-development@claude-configs": true,
+    "profile-bc-prodware@claude-configs-bc": true
   }
 }

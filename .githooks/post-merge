@@ -10,6 +10,27 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 MCP_JSON="$REPO_ROOT/profile-al-development/.mcp.json"
 
+# ── -1. Remove upstream files this fork does not use ─────────────────────
+# .mcp.jsonc never registered anything: Claude Code reads .mcp.json only, and every
+# entry in it was commented out. The MCP servers live in claude-configs-bc.
+# Upstream working notes (task-coordination.md, tdd-workflow.md, workflow-routing.md,
+# .dev-v3-design.md, TASK_SYSTEM_IMPROVEMENT_IDEA.md) are kept on purpose: they document
+# how the plugin was built and are the starting point for extending it.
+for dead in \
+  profile-al-development/.mcp.jsonc
+do
+  if [[ -e "$REPO_ROOT/$dead" ]]; then
+    rm -f "$REPO_ROOT/$dead"
+    echo "fix-upstream-paths: removed unused upstream file $dead"
+  fi
+done
+
+HOOKS_JSON="$REPO_ROOT/profile-al-development/hooks/hooks.json"
+if [[ -f "$HOOKS_JSON" ]]; then
+  mv -f "$HOOKS_JSON" "$HOOKS_JSON.disabled"
+  echo "fix-upstream-paths: disabled hooks.json (POSIX scripts, not runnable on Windows)"
+fi
+
 # ── 0. Remove upstream Linux-only or Docker-only artefacts ───────────────────
 for skill in al-symbols compile bc-source local-bc al-mutate; do
   skill_dir="$REPO_ROOT/profile-al-development/skills/$skill"

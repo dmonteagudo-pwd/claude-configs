@@ -1,4 +1,5 @@
 {
+  "_comment": "UPSTREAM FILE, NOT IN USE. Kept as a reference for the layer shape only. It is not loaded by anything: bc-code-intelligence-mcp discovers its configuration by path (~/.bc-code-intel/config.json for the user, <workspace_root>/.bc-code-intel/config.json for the project), never through a pointer env var - and the BC_CODE_INTEL_CONFIG variable the old .mcp.jsonc set does not exist in the server at all. Two further traps measured against v1.7.6 on 2026-09-12: a layer needs an explicit source.type or it is dropped with 'Layer source type is required', and knowledge files must sit in domains/<domain>/<file>.md - a flat directory indexes zero topics. See claude-configs/CLAUDE.md and profile-bc-prodware/USERGUIDE.md.",
   "knowledge_layers": [
     {
       "name": "Personal Coding Standards",
