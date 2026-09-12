@@ -93,25 +93,35 @@ test-reviewer → .dev/06-test-review.md
 
 ### MCP Server Integration
 
-The AL profile uses three MCP servers:
+**`profile-al-development` ships no MCP server of its own.** Its `.mcp.jsonc` was removed on
+2026-09-12: Claude Code only reads `.mcp.json`, never `.jsonc`, and every entry in it was
+commented out — so the file had never registered anything. Re-adding it would duplicate servers
+that `profile-bc-prodware` already provides, under a second name and a second `npx` process.
 
-1. **BC Code Intelligence MCP** (`bc-code-intelligence-mcp`)
-   - BC specialist consultations via structured personas
-   - Knowledge base in `bc-code-intel-knowledge/`
-   - Custom config via `bc-code-intel-config.json`
+The servers this profile's skills and agent prompts expect come from elsewhere:
 
-2. **Microsoft Docs MCP** (`microsoft_docs_mcp`)
-   - Official AL/BC documentation lookup
-   - HTTP-based MCP server
+1. **`bc-code-intelligence`** — declared by `profile-bc-prodware/.mcp.json`
+   (`npx -y bc-code-intelligence-mcp@latest`). BC knowledge base, specialist routing, code
+   validation. **It initializes lazily**: until `set_workspace_info` is called with the absolute
+   workspace root, every tool answers `⚠️ Server Not Yet Initialized` and `get_workspace_info`
+   reports `"is_set": false`. That is an unconfigured server, not a broken one — call
+   `set_workspace_info` once and confirm a non-zero topic count before treating a weak reply as a
+   failure.
+   - The personal knowledge layer in `bc-code-intel-knowledge/`, configured by
+     `bc-code-intel-config.json`, is **not** loaded: `profile-bc-prodware/.mcp.json` does not pass
+     `BC_CODE_INTEL_CONFIG`. Set that env var there if the layer is wanted.
 
-3. **AL Dependency MCP** (`al-mcp-server`)
-   - Base app object navigation
-   - Event discovery and dependency analysis
-   - Runs via npx
+2. **`microsoft-docs`** — declared by `profile-bc-prodware/.mcp.json`, HTTP against
+   `https://learn.microsoft.com/api/mcp`. Tools: `microsoft_docs_search`, `microsoft_docs_fetch`,
+   `microsoft_code_sample_search`. Authoritative source for BC platform facts.
 
-4. **Serena MCP** (optional project-specific MCP)
-   - IDE assistant integration
-   - Project context awareness
+3. **`al-symbols-mcp`** (`al-mcp-server` on npm) — declared **per project** in
+   `bcworkspace/.mcp.json`, because it indexes that project's own `.alpackages`. Opt in with
+   `enabledMcpjsonServers: ["al-symbols-mcp"]`. It always starts empty: load it with `al_packages`
+   (`autoDiscover=false`, absolute path) and confirm a non-zero `totalObjects`.
+
+4. **`azure-devops`** and **`github-mcp`** — declared by `profile-bc-prodware/.mcp.json`.
+   Need `$ADO_ORG` and `$GITHUB_TOKEN` respectively.
 
 ## Common Development Tasks
 
@@ -336,10 +346,15 @@ Update the version in `plugin.json` and document changes in the profile's README
 
 ### MCP Server Issues
 
-1. Check `.mcp.json` syntax
-2. Verify executable paths (e.g., `bc-code-intelligence-mcp` in PATH)
-3. Test MCP servers independently
-4. Check environment variables are set correctly
+1. Check `.mcp.json` syntax. Note the extension: Claude Code reads `.mcp.json` only — a
+   `.mcp.jsonc` registers nothing and fails silently.
+2. A missing server is usually a timeout, not a permission problem. These start via `npx`, and a
+   cold start can exceed the default limit with no error — the server is simply absent from the
+   list. Raise `MCP_TIMEOUT` (milliseconds) in `~/.claude/settings.json`.
+3. `bc-code-intelligence` answering `⚠️ Server Not Yet Initialized` is not a failure: call
+   `set_workspace_info` with the absolute workspace root first.
+4. Test MCP servers independently.
+5. Check environment variables are set correctly (`$ADO_ORG`, `$GITHUB_TOKEN`).
 
 ### Command Not Found
 
