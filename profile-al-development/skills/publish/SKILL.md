@@ -13,7 +13,7 @@ description: Deploy the compiled AL app to a Business Central server using bc-pu
 
 ## Behavior
 
-1. Check prerequisites: `.app` file exists (suggest `/compile` first if not), `.bcconfig.json` exists (suggest `bc-publish --init` if not)
+1. Check prerequisites: `.app` file exists (if not, suggest the project's build route — `/al-compile` under `profile-bc-prodware`; see the `build-tools` skill), `.bcconfig.json` exists (suggest `bc-publish --init` if not)
 2. Parse `$ARGUMENTS` and pass through to `bc-publish`
 3. Run `bc-publish`
 

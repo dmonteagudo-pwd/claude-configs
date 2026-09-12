@@ -54,9 +54,12 @@ Classify every user request by complexity, then invoke the matching skill:
 - `/document` — Technical documentation generation
 
 ### Build Skills (invoke with /)
-- `/compile` — Run al-compile with analyzer options
-- `/publish` — Deploy .app to BC server
-- `/run-tests` — Execute AL test codeunits via bc-test
+- `/publish` — Deploy .app to BC server (needs the `bc-publish` CLI)
+- `/run-tests` — Execute AL test codeunits (needs `al-runner`, or `bc-test` for integration)
+
+There is **no `/compile` skill**. The build route is a project fact, not a plugin one: with
+`profile-bc-prodware` it is `/al-compile`, otherwise it is whatever the project's `CLAUDE.md` or
+`AGENTS.md` names. See the `build-tools` skill.
 
 ### Knowledge Skills (invoke for detailed examples)
 - `build-tools` — Build pipeline quick reference

@@ -301,16 +301,19 @@ If Minor issues → Continue to diagnostics-fixer
 
 ### AL Compilation
 
-The profile includes an `al-compile` bash script that:
+**This profile ships no compiler and no `al-compile` script.** The build route belongs to the
+project or to the overlay plugin, because the compiler invocation, the symbol folder and the output
+folder are project facts.
 
-- Auto-detects VS Code AL extension and uses matching compiler version
-- Auto-detects workspace structure (single vs multi-app)
-- Auto-finds all `.alpackages` directories
-- Auto-applies ruleset files
-- Includes standard analyzers by default
-- Handles complex compilation scenarios automatically
+| Setup | Route |
+|---|---|
+| Prodware BC workspace (`profile-bc-prodware`) | `/al-compile <extension>` |
+| Copilot inside VS Code | the `al_*` tools (`al_build`, `al_publish`) |
+| A project with the `al-compile` CLI installed | `al-compile`, after `command -v al-compile` confirms it |
+| Anything else | the project's own build script, named in its `CLAUDE.md` or `AGENTS.md` |
 
-Always use `al-compile` instead of manual AL compiler commands.
+Whichever applies, use it instead of a hand-written AL compiler command line, and never mix two of
+them in one session — they disagree about where the `.app` is written.
 
 ## Plugin Version Management
 
