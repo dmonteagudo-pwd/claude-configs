@@ -1,374 +1,74 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This is a configuration repository for Claude Code plugins. It contains plugin profiles, skills,
+rules, agents and MCP server configurations — not application code.
 
-## Repository Purpose
-
-This is a configuration repository for Claude Code plugins. It contains reusable plugin profiles that can be synced across multiple projects and computers via GitHub. The repository does not contain application code - it contains plugin configurations, custom commands, specialized agents, and MCP server configurations.
-
-## Architecture
-
-### Plugin System
-
-This repository uses Claude Code's plugin architecture where:
-
-1. **Plugin profiles** are self-contained directories with a `.claude-plugin/plugin.json` file
-2. **Plugins are registered** in project `.claude/settings.json` files via `extraKnownMarketplaces` and `enabledPlugins`
-3. **Multiple plugins can be composed** together in a single project
-4. **Configuration is additive** - all plugins load together with project-specific settings
-
-### Repository Structure
+## Repository structure
 
 ```
 claude-configs/
-├── profile-al-development/          # AL/Business Central development profile
-│   ├── .claude-plugin/
-│   │   ├── plugin.json              # Plugin metadata (name, version, author)
-│   │   └── settings.json            # Plugin-specific settings
-│   ├── CLAUDE.md                    # AL coding standards and agent orchestration
-│   ├── agents/                      # Specialized agents
-│   │   ├── al-repo-summarizer.md    # Repository overview agent
-│   │   ├── CLAUDE.md                # Agent-level instructions
-│   │   └── README.md
-│   ├── skills/                      # Model-invoked skills (12 total)
-│   │   ├── build-tools/             # Build pipeline reference
-│   │   ├── develop/                 # Parallel implementation + review
-│   │   ├── document/                # Technical documentation
-│   │   ├── fix/                     # Quick bug fix (3-tier)
-│   │   ├── init-context/            # One-time project context setup
-│   │   ├── interview/               # Deep requirements gathering
-│   │   ├── plan/                    # Competitive solution design
-│   │   ├── publish/                 # Deploy .app to BC server
-│   │   ├── review-checklists/       # Quality checks
-│   │   ├── run-tests/               # Execute AL test codeunits
-│   │   ├── test/                    # Parallel test development
-│   │   └── verify-tests/            # Adversarial test verification
-│   ├── rules/                       # Auto-loaded AL guardrails (5 files)
-│   │   ├── al-architecture.md
-│   │   ├── al-conventions.md
-│   │   ├── al-data-access.md
-│   │   ├── al-engineering.md
-│   │   └── al-naming.md
-│   ├── bc-code-intel-knowledge/     # BC Intelligence MCP knowledge base
-│   │   ├── specialists/             # Specialist personas
-│   │   └── domains/                 # Domain knowledge
-│   └── README.md                    # Profile documentation
-├── project-settings-template.json   # Template for project .claude/settings.json
-├── .gitignore
-└── README.md                        # Repository overview and setup
+├── profile-al-development/        # AL/Business Central development plugin
+│   ├── .claude-plugin/plugin.json
+│   ├── CLAUDE.md                  # Orchestration manager
+│   ├── agents/                    # 1 agent (al-repo-summarizer, model: sonnet)
+│   ├── skills/                    # 12 skills (develop, plan, fix, test, ...)
+│   └── rules/                     # 5 AL guardrails
+├── project-settings-template.json
+└── README.md
 ```
 
-## Key Concepts
+## Working in this repo
 
-### Document-Driven Development (AL Profile)
+- **Branch model:** `develop` for work, `master` as stable. Push to `develop`; merge to `master`
+  after verification.
+- **Commit style:** conventional commits (`feat`, `fix`, `docs`, `refactor`).
+- **No application code lives here.** Changes affect every project that enables the plugin.
+  Test in a real project before pushing.
 
-The AL profile implements a document-driven workflow where:
+## Plugin architecture
 
-1. **Agents write to files, not chat** - Keeps main conversation clean
-2. **Agents read previous outputs** - Sequential context flow via `.dev/` directory
-3. **Persistent documentation** - Full audit trail in markdown files
-4. **User approval gates** - Stop between major phases for validation
+Plugins are self-contained directories with `.claude-plugin/plugin.json`. Projects enable them
+via `extraKnownMarketplaces` + `enabledPlugins` in `.claude/settings.json`.
 
-### Skill-Driven Workflow
+Configuration is additive: all enabled plugins load together.
 
-The AL profile uses skills (not standalone agent files) to orchestrate work. Each skill
-spawns its own subagents internally:
+## Rules and `globs` frontmatter
 
-```
-User Request
-    ↓ (classify complexity)
-/interview → .dev/00-interview.md          (optional, deep requirements)
-    ↓
-/plan → .dev/02-solution-plan.md           (2-3 architect agents debate)
-    ↓
-/develop → AL source files + code review   (N developer + 4 reviewer agents)
-    ↓
-/test → test codeunits + review            (4 test engineer agents)
-```
+The 5 rules in `profile-al-development/rules/` carry `globs: ["**/*.al"]` frontmatter. **Claude
+Code ignores `globs` and `alwaysApply`** — those are Cursor/Copilot syntax. In Claude Code, plugin
+rules load unconditionally when the plugin is active. The Prodware overlay (`profile-bc-prodware`)
+works around this by loading its own rules via explicit read instructions in the project CLAUDE.md.
 
-### MCP Server Integration
+Keep the `globs` frontmatter for Copilot compatibility. Be aware that in Claude Code, these 197
+lines enter every session whether or not the task touches `.al` files.
 
-**`profile-al-development` ships no MCP server of its own.** Its `.mcp.jsonc` was removed on
-2026-09-12: Claude Code only reads `.mcp.json`, never `.jsonc`, and every entry in it was
-commented out — so the file had never registered anything. Re-adding it would duplicate servers
-that `profile-bc-prodware` already provides, under a second name and a second `npx` process.
+## MCP servers
 
-The servers this profile's skills and agent prompts expect come from elsewhere:
+`profile-al-development` ships no MCP server. All servers come from `profile-bc-prodware` or
+from the project's own `.mcp.json`. Do not add servers here — it would duplicate what the overlay
+provides.
 
-1. **`bc-code-intelligence`** — declared by `profile-bc-prodware/.mcp.json`
-   (`npx -y bc-code-intelligence-mcp@latest`). BC knowledge base, specialist routing, code
-   validation. **It initializes lazily**: until `set_workspace_info` is called with the absolute
-   workspace root, every tool answers `⚠️ Server Not Yet Initialized` and `get_workspace_info`
-   reports `"is_set": false`. That is an unconfigured server, not a broken one — call
-   `set_workspace_info` once and confirm a non-zero topic count before treating a weak reply as a
-   failure.
-   - The personal knowledge layer in `bc-code-intel-knowledge/` is **not** loaded, and
-     `bc-code-intel-config.json` is dead weight. Measured against v1.7.6 on 2026-09-12: the
-     server reads no env var named `BC_CODE_INTEL_CONFIG` (that name, used by the old
-     `.mcp.jsonc`, does not exist), and `BC_CODE_INTEL_CONFIG_PATH` did not load the layer
-     either. Configuration is discovered **by path**, not by pointer:
-     `~/.bc-code-intel/config.{json,yaml,yml}` for the user, and
-     `<workspace_root>/.bc-code-intel/config.{json,yaml,yml}` — or the deprecated
-     `bckb-config.json` — for the project. `<workspace_root>` is what `set_workspace_info`
-     received, so the file must sit in the project, not in a plugin.
-   - A layer entry needs an explicit `source.type`; omit it and the layer is dropped with
-     `Layer source type is required`. Knowledge files must live in `domains/<domain>/<file>.md` —
-     a flat directory of `.md` files indexes zero topics. Working shape:
+## bc-code-intel-knowledge (removed)
 
-     ```json
-     { "layers": [ { "name": "prodware", "priority": 90, "enabled": true,
-         "source": { "type": "local", "path": "<absolute path to the knowledge root>" } } ] }
-     ```
+The `bc-code-intel-knowledge/` directory has been removed. The `bc-code-intelligence` server does
+not read specialist personas from the plugin directory — it discovers configuration by path
+(`~/.bc-code-intel/config.*` or `<workspace_root>/.bc-code-intel/config.*`). The measured findings
+from v1.7.6 (2026-09-12) are documented in the README for reference.
 
-     Verified: `Loaded 11534 topics from 3 layers` (embedded 11533 + 1 custom topic), and the
-     custom topic ranked first for its own query. The built-in `project` layer is separate and
-     looks for `./bc-code-intel-overrides` relative to the server's CWD, not the workspace root.
+## AL compilation
 
-2. **`microsoft-docs`** — declared by `profile-bc-prodware/.mcp.json`, HTTP against
-   `https://learn.microsoft.com/api/mcp`. Tools: `microsoft_docs_search`, `microsoft_docs_fetch`,
-   `microsoft_code_sample_search`. Authoritative source for BC platform facts.
-
-3. **`al-symbols-mcp`** (`al-mcp-server` on npm) — declared **per project** in
-   `bcworkspace/.mcp.json`, because it indexes that project's own `.alpackages`. Opt in with
-   `enabledMcpjsonServers: ["al-symbols-mcp"]`. It always starts empty: load it with `al_packages`
-   (`autoDiscover=false`, absolute path) and confirm a non-zero `totalObjects`.
-
-4. **`azure-devops`** and **`github-mcp`** — declared by `profile-bc-prodware/.mcp.json`.
-   Need `$ADO_ORG` and `$GITHUB_TOKEN` respectively.
-
-## Common Development Tasks
-
-### Adding a New Plugin Profile
-
-```bash
-cd ~/claude-configs
-mkdir -p profile-name/{.claude-plugin,skills,rules,agents}
-
-# Create plugin.json
-cat > profile-name/.claude-plugin/plugin.json <<EOF
-{
-  "name": "profile-name",
-  "description": "Brief description",
-  "version": "1.0.0",
-  "author": {
-    "name": "Your Name"
-  }
-}
-EOF
-
-# Add configuration files
-# - profile-name/CLAUDE.md
-# - profile-name/skills/skill-name/SKILL.md
-# - profile-name/rules/*.md
-# - profile-name/agents/*.md (if needed)
-
-git add profile-name/
-git commit -m "Add profile-name plugin"
-git push
-```
-
-### Updating an Existing Plugin
-
-```bash
-cd ~/claude-configs
-
-# Edit files (e.g., profile-al-development/CLAUDE.md)
-# Make improvements to agents, commands, or instructions
-
-git add profile-al-development/
-git commit -m "Improve [specific aspect]"
-git push
-
-# On other computers
-git pull  # Changes immediately available to all projects
-```
-
-### Creating a Skill
-
-Skills are the primary extension point. Each lives in `skills/<name>/SKILL.md`:
-
-```markdown
----
-description: Brief one-line description
-user-invocable: true
----
-
-# Skill instructions
-
-[Detailed instructions for Claude on how to execute this skill]
-```
-
-### Creating an Agent
-
-Agents are autonomous subprocesses stored in `agents/<name>.md`. This plugin ships one
-(`al-repo-summarizer`); most workflow logic lives in skills instead.
-
-### Testing Plugin Changes
-
-```bash
-# In a test AL project
-cd ~/path/to/test-project
-
-# Ensure plugin is enabled in .claude/settings.json
-cat .claude/settings.json
-
-# Start Claude Code and test the change
-claude
-
-# Test specific command
-/command-name "test input"
-```
-
-## Configuration Hierarchy
-
-Claude Code loads configurations in this order (later overrides earlier):
-
-1. Enterprise managed settings (if configured)
-2. User settings (`~/.claude/settings.json`)
-3. User plugins (registered in user settings)
-4. **Project settings** (`.claude/settings.json`)
-5. **Project plugins** (enabled in project settings) ← This repository's plugins load here
-6. Local settings (`.claude/settings.local.json` - gitignored)
-
-## File Naming Conventions
-
-- **Skills**: `skills/skill-name/SKILL.md` (kebab-case directory)
-- **Rules**: `rules/rule-name.md` (kebab-case)
-- **Agents**: `agents/agent-name.md` (kebab-case)
-- **Config**: `.claude-plugin/plugin.json`
-- **Documentation**: `CLAUDE.md` (uppercase), `README.md`
-
-## MCP Configuration Structure
-
-MCP servers are configured in `.mcp.json` at the plugin root:
-
-```json
-{
-  "mcpServers": {
-    "server-name": {
-      "type": "stdio|http|sse",
-      "command": "executable",
-      "args": ["arg1", "arg2"],
-      "env": {
-        "VAR_NAME": "value"
-      }
-    }
-  }
-}
-```
-
-## Git Workflow
-
-This repository should be cloned to `~/claude-configs/` and kept synchronized:
-
-```bash
-# Initial setup
-cd ~
-git clone git@github.com:YOUR_USERNAME/claude-configs.git
-
-# Regular sync
-cd ~/claude-configs
-git pull  # Get updates from other computers
-# ... make changes ...
-git add .
-git commit -m "Descriptive message"
-git push  # Share with other computers
-```
-
-## Security Considerations
-
-- Never commit credentials, API keys, or certificates
-- Use `.gitignore` to prevent accidental commits
-- Keep authentication in project-local files (`.env`, gitignored)
-- The `.gitignore` already excludes common sensitive patterns
-
-## AL Profile Specifics
-
-### Approval Gates
-
-The AL profile implements mandatory approval gates in workflows:
-
-1. After requirements analysis - user must approve before solution planning
-2. After solution planning - user must approve before implementation
-3. After code review - user must approve before testing
-
-These gates prevent wasted work and ensure user validation at each phase.
-
-### Iteration Pattern
-
-The `/develop` skill handles iterative refinement internally: developer subagents write
-code, reviewer subagents assess it, and the cycle repeats until quality gates pass.
-Critical or high-severity issues trigger re-implementation; minor issues proceed to
-compilation.
-
-### AL Compilation
-
-**This profile ships no compiler and no `al-compile` script.** The build route belongs to the
-project or to the overlay plugin, because the compiler invocation, the symbol folder and the output
-folder are project facts.
+This profile ships no compiler script. The build route belongs to the project or the overlay
+plugin:
 
 | Setup | Route |
 |---|---|
 | Prodware BC workspace (`profile-bc-prodware`) | `/al-compile <extension>` |
-| Copilot inside VS Code | the `al_*` tools (`al_build`, `al_publish`) |
-| A project with the `al-compile` CLI installed | `al-compile`, after `command -v al-compile` confirms it |
-| Anything else | the project's own build script, named in its `CLAUDE.md` or `AGENTS.md` |
+| Copilot inside VS Code | `al_build`, `al_publish` |
+| Project with `al-compile` CLI | `al-compile` (verify with `command -v`) |
+| Anything else | The project's own build script |
 
-Whichever applies, use it instead of a hand-written AL compiler command line, and never mix two of
-them in one session — they disagree about where the `.app` is written.
-
-## Plugin Version Management
-
-Plugins use semantic versioning in `plugin.json`:
-
-- **Major**: Breaking changes (e.g., renamed commands, removed agents)
-- **Minor**: New features (e.g., new commands, enhanced agents)
-- **Patch**: Bug fixes, documentation improvements
-
-Update the version in `plugin.json` and document changes in the profile's README.md.
+Never mix two build routes in one session.
 
 ## Troubleshooting
 
-### Plugin Not Loading
-
-1. Verify registration in project `.claude/settings.json`
-2. Check `extraKnownMarketplaces` path is absolute
-3. Validate `plugin.json` syntax
-4. Run `/config` in Claude Code to see loaded plugins
-
-### MCP Server Issues
-
-1. Check `.mcp.json` syntax. Note the extension: Claude Code reads `.mcp.json` only — a
-   `.mcp.jsonc` registers nothing and fails silently.
-2. A missing server is usually a timeout, not a permission problem. These start via `npx`, and a
-   cold start can exceed the default limit with no error — the server is simply absent from the
-   list. Raise `MCP_TIMEOUT` (milliseconds) in `~/.claude/settings.json`.
-3. `bc-code-intelligence` answering `⚠️ Server Not Yet Initialized` is not a failure: call
-   `set_workspace_info` with the absolute workspace root first.
-4. Test MCP servers independently.
-5. Check environment variables are set correctly (`$ADO_ORG`, `$GITHUB_TOKEN`).
-
-### Skill Not Found
-
-1. Ensure plugin is enabled in project settings
-2. Skill files must be in `skills/<name>/SKILL.md`
-3. Check the skill list with `/help` or the session's skill listing
-4. Restart Claude Code session if needed
-
-### Changes Not Appearing
-
-1. Settings and CLAUDE.md hot-reload automatically
-2. For command/agent changes, start a new Claude Code session
-3. Verify changes are committed and pushed
-4. On other computers, verify `git pull` was run
-
-## Best Practices
-
-1. **Test before pushing** - Verify changes work in a test project
-2. **Clear commit messages** - Describe what changed and why
-3. **Update documentation** - Keep READMEs in sync with changes
-4. **Semantic versioning** - Increment version in plugin.json
-5. **Backward compatibility** - Avoid breaking changes when possible
-6. **Scope plugins narrowly** - One technology/domain per plugin
-7. **Document agent inputs/outputs** - Clear data flow in agent definitions
-8. **Use approval gates** - Stop for user validation at major decision points
+See `README.md` for setup, troubleshooting and best practices.

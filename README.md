@@ -20,8 +20,7 @@ claude-configs/
 │   ├── CLAUDE.md              # AL coding standards and orchestration
 │   ├── skills/                # 12 model-invoked skills (develop, plan, fix, test, ...)
 │   ├── rules/                 # 5 auto-loaded AL guardrails
-│   ├── agents/                # 1 agent (al-repo-summarizer)
-│   └── bc-code-intel-knowledge/ # BC Intelligence knowledge base
+│   └── agents/                # 1 agent (al-repo-summarizer)
 ├── .gitignore
 └── README.md (this file)
 ```
@@ -225,10 +224,36 @@ Claude Code loads configurations in this order (later overrides earlier):
 
 ### Plugin not loading
 
-1. Check plugin registration in `~/.claude/settings.json`
-2. Verify path is absolute (not relative)
-3. Run `/config` in Claude Code to see loaded plugins
-4. Check plugin.json syntax is valid JSON
+1. Verify registration in project `.claude/settings.json` (`extraKnownMarketplaces` + `enabledPlugins`)
+2. Check `extraKnownMarketplaces` path is absolute (not relative)
+3. Validate `plugin.json` syntax (valid JSON)
+4. Run `/config` in Claude Code to see loaded plugins
+
+### MCP server issues
+
+1. Check `.mcp.json` syntax. Claude Code reads `.mcp.json` only — a `.mcp.jsonc` registers nothing
+   and fails silently.
+2. A missing server is usually a timeout, not a permission problem. These start via `npx`, and a
+   cold start can exceed the default limit with no error — the server is simply absent from the
+   list. Raise `MCP_TIMEOUT` (milliseconds) in `~/.claude/settings.json`.
+3. `bc-code-intelligence` answering `⚠️ Server Not Yet Initialized` is not a failure: call
+   `set_workspace_info` with the absolute workspace root first.
+4. Test MCP servers independently.
+5. Check environment variables are set correctly (`$ADO_ORG`, `$GITHUB_TOKEN`).
+
+### Skill not found
+
+1. Ensure plugin is enabled in project settings
+2. Skill files must be in `skills/<name>/SKILL.md`
+3. Check the skill list with `/help` or the session's skill listing
+4. Restart Claude Code session if needed
+
+### Changes not appearing
+
+1. Settings and CLAUDE.md hot-reload automatically (no restart needed)
+2. For command/agent changes, start a new Claude Code session
+3. Verify you committed and pushed changes
+4. On other computers, verify `git pull` was run
 
 ### Conflicts between plugins
 
@@ -236,12 +261,31 @@ Claude Code loads configurations in this order (later overrides earlier):
 - CLAUDE.md files from all plugins are merged
 - Settings follow precedence rules (project > user > plugin)
 
-### Changes not appearing
+## bc-code-intelligence knowledge layer (reference)
 
-1. Settings hot-reload automatically (no restart needed)
-2. For CLAUDE.md changes, start a new session
-3. Verify you committed and pushed changes
-4. On other computer, verify you pulled latest changes
+The `bc-code-intel-knowledge/` directory was removed from `profile-al-development`. The server
+does not load specialist personas from the plugin directory. Measured against v1.7.6 (2026-09-12):
+
+- No env var `BC_CODE_INTEL_CONFIG` is read (the old `.mcp.jsonc` name does not exist).
+- `BC_CODE_INTEL_CONFIG_PATH` did not load the layer either.
+- Configuration is discovered **by path**: `~/.bc-code-intel/config.{json,yaml,yml}` for the user,
+  and `<workspace_root>/.bc-code-intel/config.{json,yaml,yml}` for the project.
+- A layer entry needs `source.type`; omit it and the layer drops with `Layer source type is required`.
+- Knowledge files must live in `domains/<domain>/<file>.md` — a flat directory indexes zero topics.
+- Working shape:
+  ```json
+  { "layers": [{ "name": "prodware", "priority": 90, "enabled": true,
+      "source": { "type": "local", "path": "<absolute path>" } }] }
+  ```
+- Verified: `Loaded 11534 topics from 3 layers` (11533 embedded + 1 custom).
+
+## Best practices
+
+1. **Test before pushing** — changes affect every project that enables the plugin
+2. **Conventional commits** — `feat`, `fix`, `docs`, `refactor`
+3. **Semantic versioning** — increment version in `plugin.json`
+4. **Scope plugins narrowly** — one technology/domain per plugin
+5. **Use approval gates** — stop for user validation at major decision points
 
 ## Resources
 
