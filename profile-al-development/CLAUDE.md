@@ -65,4 +65,16 @@ There is **no `/compile` skill**. The build route is a project fact, not a plugi
 - `build-tools` — Build pipeline quick reference
 - `review-checklists` — Quality checks for plans, code, and tests
 
-Rules in `rules/` (auto-loaded — `al-engineering.md` always; `al-architecture.md`, `al-naming.md`, `al-data-access.md`, `al-conventions.md` when an `*.al` file is in context) provide standing AL guardrails without skill invocation.
+### AL Guardrail Rules (read on demand — NOT auto-loaded)
+
+The files in this plugin's `rules/` directory hold the standing AL guardrails. Claude Code does **not** auto-load a plugin's `rules/` directory, and the `globs`/`alwaysApply` frontmatter they carry is Cursor/Copilot syntax that Claude Code ignores. They apply only because this instruction tells you to read them — read them with the Read tool before the first action they cover, not at session start (a session that never touches `.al` must not pay for them):
+
+| File | Read it before |
+|---|---|
+| `rules/al-engineering.md` | writing or modifying any `.al` file |
+| `rules/al-architecture.md` | creating/moving objects or touching cross-object structure |
+| `rules/al-naming.md` | naming any new object, field, or procedure |
+| `rules/al-data-access.md` | writing record access, queries, or filters |
+| `rules/al-conventions.md` | any `.al` edit, for house style |
+
+Resolve `rules/` against this plugin's own directory. If a project overlay (e.g. `profile-bc-prodware`) supplies stricter AL rules, those take precedence.

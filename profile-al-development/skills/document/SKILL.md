@@ -23,7 +23,7 @@ If no task slug is apparent, ask the user which feature to document.
 
 ### Step 2: Spawn Docs-Writer Agent
 
-Spawn a docs-writer subagent with the full prompt from `docs-writer-prompt.md` in this skill folder. Pass all gathered context as the briefing.
+Spawn a docs-writer subagent with `model: sonnet` (documentation does not need an Opus main session; do not let it inherit one) and the full prompt from `docs-writer-prompt.md` in this skill folder. Pass all gathered context as the briefing.
 
 ### Step 3: Review Documentation
 
