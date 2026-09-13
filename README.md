@@ -17,11 +17,11 @@ claude-configs/
 ├── profile-al-development/    # AL (Business Central) development profile
 │   ├── .claude-plugin/
 │   │   └── plugin.json        # Plugin metadata
-│   ├── CLAUDE.md              # AL coding standards and patterns
-│   ├── commands/              # Custom slash commands for AL
-│   ├── skills/                # Model-invoked skills for AL
-│   ├── agents/                # Custom subagents for AL
-│   └── .mcp.json              # AL MCP server configuration
+│   ├── CLAUDE.md              # AL coding standards and orchestration
+│   ├── skills/                # 12 model-invoked skills (develop, plan, fix, test, ...)
+│   ├── rules/                 # 5 auto-loaded AL guardrails
+│   ├── agents/                # 1 agent (al-repo-summarizer)
+│   └── bc-code-intel-knowledge/ # BC Intelligence knowledge base
 ├── .gitignore
 └── README.md (this file)
 ```

@@ -26,34 +26,32 @@ claude-configs/
 │   │   ├── plugin.json              # Plugin metadata (name, version, author)
 │   │   └── settings.json            # Plugin-specific settings
 │   ├── CLAUDE.md                    # AL coding standards and agent orchestration
-│   ├── agents/                      # 11 specialized agents for AL development
-│   │   ├── requirements-engineer.md
-│   │   ├── solution-planner.md
-│   │   ├── al-developer.md
-│   │   ├── code-reviewer.md
-│   │   ├── diagnostics-fixer.md
-│   │   ├── test-engineer.md
-│   │   ├── test-reviewer.md
-│   │   ├── bc-expert.md
-│   │   ├── docs-lookup.md
-│   │   ├── dependency-navigator.md
-│   │   └── interview.md
-│   ├── commands/                    # Slash commands (user-invocable)
-│   │   ├── dev-cycle.md            # Full development lifecycle
-│   │   ├── plan.md                 # Planning phase only
-│   │   ├── develop.md              # Development phase only
-│   │   ├── test.md                 # Testing phase only
-│   │   ├── fix.md                  # Quick bug fix workflow
-│   │   ├── estimate.md             # Estimation workflow
-│   │   ├── interview.md            # Deep requirements gathering
-│   │   ├── diagnostics.md          # Compiler diagnostics
-│   │   ├── bc-expert.md            # BC specialist consultation
-│   │   ├── docs-lookup.md          # Microsoft Docs search
-│   │   └── nav-baseapp.md          # Base app navigation
+│   ├── agents/                      # Specialized agents
+│   │   ├── al-repo-summarizer.md    # Repository overview agent
+│   │   ├── CLAUDE.md                # Agent-level instructions
+│   │   └── README.md
+│   ├── skills/                      # Model-invoked skills (12 total)
+│   │   ├── build-tools/             # Build pipeline reference
+│   │   ├── develop/                 # Parallel implementation + review
+│   │   ├── document/                # Technical documentation
+│   │   ├── fix/                     # Quick bug fix (3-tier)
+│   │   ├── init-context/            # One-time project context setup
+│   │   ├── interview/               # Deep requirements gathering
+│   │   ├── plan/                    # Competitive solution design
+│   │   ├── publish/                 # Deploy .app to BC server
+│   │   ├── review-checklists/       # Quality checks
+│   │   ├── run-tests/               # Execute AL test codeunits
+│   │   ├── test/                    # Parallel test development
+│   │   └── verify-tests/            # Adversarial test verification
+│   ├── rules/                       # Auto-loaded AL guardrails (5 files)
+│   │   ├── al-architecture.md
+│   │   ├── al-conventions.md
+│   │   ├── al-data-access.md
+│   │   ├── al-engineering.md
+│   │   └── al-naming.md
 │   ├── bc-code-intel-knowledge/     # BC Intelligence MCP knowledge base
 │   │   ├── specialists/             # Specialist personas
 │   │   └── domains/                 # Domain knowledge
-│   ├── .mcp.json                    # MCP server configuration
 │   └── README.md                    # Profile documentation
 ├── project-settings-template.json   # Template for project .claude/settings.json
 ├── .gitignore
@@ -71,24 +69,21 @@ The AL profile implements a document-driven workflow where:
 3. **Persistent documentation** - Full audit trail in markdown files
 4. **User approval gates** - Stop between major phases for validation
 
-### Agent Collaboration Pattern
+### Skill-Driven Workflow
+
+The AL profile uses skills (not standalone agent files) to orchestrate work. Each skill
+spawns its own subagents internally:
 
 ```
 User Request
+    ↓ (classify complexity)
+/interview → .dev/00-interview.md          (optional, deep requirements)
     ↓
-requirements-engineer → .dev/01-requirements.md
+/plan → .dev/02-solution-plan.md           (2-3 architect agents debate)
     ↓
-solution-planner → .dev/02-solution-plan.md (uses MCP tools)
+/develop → AL source files + code review   (N developer + 4 reviewer agents)
     ↓
-al-developer → AL source files (reads plan)
-    ↓
-code-reviewer → .dev/03-code-review.md
-    ↓
-diagnostics-fixer → .dev/04-diagnostics.md + fixes
-    ↓
-test-engineer → .dev/05-test-plan.md + test code
-    ↓
-test-reviewer → .dev/06-test-review.md
+/test → test codeunits + review            (4 test engineer agents)
 ```
 
 ### MCP Server Integration
@@ -147,7 +142,7 @@ The servers this profile's skills and agent prompts expect come from elsewhere:
 
 ```bash
 cd ~/claude-configs
-mkdir -p profile-name/{.claude-plugin,commands,agents}
+mkdir -p profile-name/{.claude-plugin,skills,rules,agents}
 
 # Create plugin.json
 cat > profile-name/.claude-plugin/plugin.json <<EOF
@@ -163,9 +158,9 @@ EOF
 
 # Add configuration files
 # - profile-name/CLAUDE.md
-# - profile-name/commands/*.md
-# - profile-name/agents/*.md
-# - profile-name/.mcp.json (if needed)
+# - profile-name/skills/skill-name/SKILL.md
+# - profile-name/rules/*.md
+# - profile-name/agents/*.md (if needed)
 
 git add profile-name/
 git commit -m "Add profile-name plugin"
@@ -188,41 +183,25 @@ git push
 git pull  # Changes immediately available to all projects
 ```
 
-### Creating a Command
+### Creating a Skill
 
-Commands are user-invocable slash commands stored in `commands/*.md`:
+Skills are the primary extension point. Each lives in `skills/<name>/SKILL.md`:
 
 ```markdown
-# Command: /command-name
+---
+description: Brief one-line description
+user-invocable: true
+---
 
-Brief description of what this command does.
+# Skill instructions
 
-## Implementation
-
-[Detailed instructions for Claude on how to execute this command]
+[Detailed instructions for Claude on how to execute this skill]
 ```
 
 ### Creating an Agent
 
-Agents are autonomous subprocesses stored in `agents/*.md`:
-
-```markdown
-# Agent: agent-name
-
-Role description and purpose.
-
-## Input
-
-What this agent reads (e.g., .dev/01-requirements.md)
-
-## Output
-
-What this agent produces (e.g., .dev/02-solution.md)
-
-## Process
-
-[Detailed steps the agent should follow]
-```
+Agents are autonomous subprocesses stored in `agents/<name>.md`. This plugin ships one
+(`al-repo-summarizer`); most workflow logic lives in skills instead.
 
 ### Testing Plugin Changes
 
@@ -253,9 +232,10 @@ Claude Code loads configurations in this order (later overrides earlier):
 
 ## File Naming Conventions
 
-- **Commands**: `commands/command-name.md` (kebab-case)
+- **Skills**: `skills/skill-name/SKILL.md` (kebab-case directory)
+- **Rules**: `rules/rule-name.md` (kebab-case)
 - **Agents**: `agents/agent-name.md` (kebab-case)
-- **Config**: `.claude-plugin/plugin.json`, `.mcp.json`
+- **Config**: `.claude-plugin/plugin.json`
 - **Documentation**: `CLAUDE.md` (uppercase), `README.md`
 
 ## MCP Configuration Structure
@@ -316,16 +296,10 @@ These gates prevent wasted work and ensure user validation at each phase.
 
 ### Iteration Pattern
 
-Development phase uses iterative refinement:
-
-```
-al-developer → code
-    ↓
-code-reviewer → review
-    ↓
-If Critical/High issues → ITERATE back to al-developer
-If Minor issues → Continue to diagnostics-fixer
-```
+The `/develop` skill handles iterative refinement internally: developer subagents write
+code, reviewer subagents assess it, and the cycle repeats until quality gates pass.
+Critical or high-severity issues trigger re-implementation; minor issues proceed to
+compilation.
 
 ### AL Compilation
 
@@ -374,11 +348,11 @@ Update the version in `plugin.json` and document changes in the profile's README
 4. Test MCP servers independently.
 5. Check environment variables are set correctly (`$ADO_ORG`, `$GITHUB_TOKEN`).
 
-### Command Not Found
+### Skill Not Found
 
 1. Ensure plugin is enabled in project settings
-2. Command files must be in `commands/` directory
-3. Command names are kebab-case without `.md` extension
+2. Skill files must be in `skills/<name>/SKILL.md`
+3. Check the skill list with `/help` or the session's skill listing
 4. Restart Claude Code session if needed
 
 ### Changes Not Appearing
