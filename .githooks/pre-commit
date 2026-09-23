@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+if [ -f "tools/ensure-plugin-version.mjs" ]; then
+  echo "[pre-commit] Verifying plugin version bump..."
+  node tools/ensure-plugin-version.mjs
+fi
+
+echo "[pre-commit] Verifying JSON syntax..."
+for file in $(git diff --cached --name-only 2>/dev/null | grep -E '\.(json|mcp\.json)$' || true); do
+  if [ -f "$file" ]; then
+    node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "$file" || {
+      echo "[ERROR] Invalid JSON syntax in $file"
+      exit 1
+    }
+  fi
+done
+
+echo "[pre-commit] All pre-commit checks passed."
