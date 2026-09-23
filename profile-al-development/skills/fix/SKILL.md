@@ -30,7 +30,7 @@ Read the user's description and classify into one of three tiers:
 - Fix an incorrect property value: `Editable = true` → `Editable = false`
 - Remove a duplicate line
 
-**Action**: Spawn a quick-fix agent using the haiku model. Load prompt from `quick-fix-prompt.md` in this skill folder.
+**Action**: Spawn a quick-fix agent using the **sonnet** model. Load prompt from `quick-fix-prompt.md` in this skill folder. (Note: Do not use Haiku — CentralGauge AL benchmark shows Haiku 4.5 has only a 19.8% repair rate on AL code, leading to broken syntax even on trivial edits).
 
 **Cost**: ~200 tokens, 1-2 minutes.
 
@@ -45,7 +45,7 @@ Read the user's description and classify into one of three tiers:
 - Fix event subscriber parameters that don't match the publisher signature
 - Add a missing permission to a permission set
 
-**Action**: Spawn an al-developer agent. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files).
+**Action**: Spawn an al-developer agent using `model: opus`. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files). With Opus 5.5's 85.2% AL repair rate, compiler and signature errors are resolved cleanly on the first pass.
 
 **Cost**: ~300 tokens, 3-5 minutes.
 
@@ -62,8 +62,8 @@ Read the user's description and classify into one of three tiers:
 **Action**:
 1. Generate a task slug from the issue description.
 2. Create `.dev/<task-slug>/` directory for investigation notes.
-3. Spawn an architect agent to analyze the root cause and produce a fix plan.
-4. Then spawn an al-developer agent to implement the fix plan.
+3. Spawn an architect agent (`model: opus`) to analyze the root cause and produce a fix plan.
+4. Then spawn an al-developer agent (`model: opus`) to implement the fix plan.
 
 **Cost**: ~500 tokens, 10-20 minutes.
 
