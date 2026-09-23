@@ -35,7 +35,7 @@ Follow the proportional planning guidelines in `proportional-planning.md` from t
 
 ### Step 5: Spawn Solution Architect Agents IN PARALLEL
 
-Use the Agent tool to spawn 2-3 agents simultaneously, each with `model: opus`. BC/AL solution architecture is knowledge- and reasoning-intensive; use the strongest model here — quality of the design outweighs token cost, and a weaker model that iterates more or designs worse is the false economy. Each agent gets:
+Use the Agent tool to spawn 2-3 agents simultaneously, each with `model: opus`. BC/AL solution architecture is knowledge- and reasoning-intensive; use the strongest model here — quality of the design outweighs token cost, and a weaker model that iterates more or designs worse is the false economy. (Note: with Opus 5.5, native reasoning delivers thorough architectures at standard effort without requiring artificial thinking prompts). Each agent gets:
 - The full prompt from `solution-architect-prompt.md` in this skill's directory
 - The requirements (from file or user input)
 - The project context (if available)
@@ -57,6 +57,7 @@ Once all architects complete, review their solutions. Look for:
 - Where do they disagree? (These are the real design decisions.)
 - What did one architect consider that others missed?
 - What are the weak points in each approach?
+- **Verify symbol evidence:** Check that any BC standard table, event, interface, or extension point asserted by the architects actually exists in `.alpackages` (via `al-symbols-mcp`) or `microsoft-docs`, rather than accepting unverified extensibility points.
 
 Challenge weak points yourself. You do not need to spawn agents for this — apply your own judgment.
 
