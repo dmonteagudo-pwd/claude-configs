@@ -91,18 +91,20 @@ For Axis 2:
 
 ## Step 7: Review Findings and Manage Iteration
 
-When all reviewers complete:
+When all review outputs are collected:
 
-1. **Collect** all findings from all 4 reviewers.
-2. **Verify Evidence:** Validate that each finding cites an exact file and line number and demonstrates why it is wrong before accepting it as an issue. Discard unverified or hallucinated findings.
-3. **Categorize** each verified finding:
+1. **Verify Axis 1 (Spec Compliance) first:**
+   - If any requirement from `01-requirements.md` is missing, incomplete, or incorrectly implemented, this is automatically **CRITICAL**.
+   - **Rule:** A clean pass on Axis 2 (Technical Standards) can NEVER override a failure in Axis 1 (Spec Compliance). Code that follows every AL convention but implements the wrong thing is REJECTED.
+2. **Verify Evidence on Axis 2 (Technical Standards):**
+   - Validate that each finding cites an exact file and line number and demonstrates why it is wrong before accepting it as an issue. Discard unverified or hallucinated findings.
+3. **Categorize verified Axis 2 findings:**
    - **CRITICAL** — Must fix. Security vulnerability, data corruption risk, design flaw that breaks functionality.
    - **HIGH** — Should fix. Performance issue, DRY violation, missing error handling, poor pattern usage.
    - **MINOR** — Nice to have. Documentation gaps, naming style preferences, minor readability improvements.
-4. **If CRITICAL issues exist:**
+4. **If CRITICAL issues exist in either axis:**
    - Assign fixes to the appropriate developer agent(s).
-   - After fixes, re-run the relevant reviewer(s) to verify.
-   - Iterate until no CRITICAL issues remain.
+   - After fixes, re-verify the affected axis until no CRITICAL issues remain.
    - Do NOT present to the user until critical issues are resolved.
 5. **If only HIGH/MINOR issues remain:**
    - Document them for user decision.
@@ -141,20 +143,14 @@ Write `.dev/<task-slug>/03-code-review.md` with YOUR synthesis (not a copy-paste
 - **Test Coverage:** APPROVED / CONCERNS
 
 ## Critical Issues Found and Fixed
-| # | Issue | Reviewer | Fix Applied |
-|---|-------|----------|-------------|
-| 1 | ... | ... | ... |
+| # | Axis | Issue | Reviewer | Fix Applied |
+|---|------|-------|----------|-------------|
+| 1 | ...  | ...   | ...      | ...         |
 
 ## Issues for User Decision
-| # | Issue | Severity | Reviewer | Recommendation |
-|---|-------|----------|----------|----------------|
-| 1 | ... | HIGH/MINOR | ... | ... |
-
-## Review Consensus
-- Security: APPROVED / CONCERNS
-- AL Expert: APPROVED / CONCERNS
-- Performance: APPROVED / CONCERNS
-- Test Coverage: APPROVED / CONCERNS
+| # | Axis | Issue | Severity | Reviewer | Recommendation |
+|---|------|-------|----------|----------|----------------|
+| 1 | ...  | ...   | HIGH/MINOR | ...    | ...            |
 
 ## Recommendation
 <Your synthesized recommendation to the user>
