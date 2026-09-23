@@ -47,7 +47,7 @@ For each developer agent:
 3. Assign their specific module and files from the partition.
 4. Provide the path to the solution plan: `.dev/<task-slug>/02-solution-plan.md`
 5. Provide the path to project context: `.dev/project-context.md`
-6. Reference coding standards from the `al-coding-standards` skill directory.
+6. Reference coding standards from this plugin's `rules/` directory (or project overlay `profile-bc-prodware/rules/pwe-coding-guidelines.md`).
 7. Use model: **opus** for code quality (on Opus 5.5, standard/medium effort achieves high precision with low false alarms; do not force maximum effort loops).
 **Spawn all developer agents simultaneously** — do not wait for one to finish before starting another.
 

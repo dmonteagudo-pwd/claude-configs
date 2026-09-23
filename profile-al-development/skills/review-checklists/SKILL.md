@@ -41,7 +41,7 @@ Before presenting code to the user, verify along both orthogonal review axes:
 - [ ] **Matches the plan** -- implementation follows the agreed solution design; deviations are explained and justified
 
 ### Axis 2: Technical Standards (Engineering Quality)
-- [ ] **AL coding standards met** -- PascalCase, namespaces, affix rules, SetLoadFields, FieldCaption errors, DataClassification, ApplicationArea (see al-coding-standards skill)
+- [ ] **AL coding standards met** -- PascalCase, namespaces, affix rules, SetLoadFields, FieldCaption errors, DataClassification, ApplicationArea (see `rules/` directory or project `pwe-coding-guidelines.md`)
 - [ ] **Consistent naming** -- identifiers follow the same conventions throughout; no mix of styles
 - [ ] **Compiles cleanly** -- no obvious syntax errors, missing semicolons, undeclared variables, or type mismatches
 - [ ] **Minimal changes** -- only the code necessary to fulfill the requirement; no unrelated refactoring

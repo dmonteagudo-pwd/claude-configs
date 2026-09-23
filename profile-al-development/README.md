@@ -1,6 +1,6 @@
 # AL Development Profile - Full Lifecycle
 
-**Version:** 2.21.0
+**Version:** 5.2.5
 
 Claude Code profile for Microsoft Dynamics 365 Business Central AL development with intelligent complexity routing and proportional planning.
 
@@ -31,7 +31,7 @@ In your AL project's `.claude/settings.json`:
     "my-configs": {
       "source": {
         "source": "directory",
-        "path": "~/claude-configs"
+        "path": "C:/Users/<you>/claude-configs"
       }
     }
   },
