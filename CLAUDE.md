@@ -34,13 +34,14 @@ Configuration is additive: all enabled plugins load together.
 
 ## Rules and `globs` frontmatter
 
-The 5 rules in `profile-al-development/rules/` carry `globs: ["**/*.al"]` frontmatter. **Claude
-Code ignores `globs` and `alwaysApply`** — those are Cursor/Copilot syntax. In Claude Code, plugin
-rules load unconditionally when the plugin is active. The Prodware overlay (`profile-bc-prodware`)
-works around this by loading its own rules via explicit read instructions in the project CLAUDE.md.
+The 5 rules in `profile-al-development/rules/` carry `globs: ["**/*.al"]` frontmatter for
+Copilot/Cursor compatibility. **Claude Code does not auto-load a plugin's `rules/` directory**,
+and ignores `globs` and `alwaysApply` frontmatter entirely.
 
-Keep the `globs` frontmatter for Copilot compatibility. Be aware that in Claude Code, these 197
-lines enter every session whether or not the task touches `.al` files.
+In Claude Code, rules are loaded strictly **on demand**: the plugin's `CLAUDE.md` (and project
+overlays like `profile-bc-prodware`) instruct the model to read specific rule files via the
+`Read` tool before the first action on AL code, architecture, or naming — ensuring 0 passive
+token cost at session start.
 
 ## MCP servers
 
