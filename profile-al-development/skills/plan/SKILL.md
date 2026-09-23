@@ -68,6 +68,7 @@ Pick the winning approach or create a hybrid. **This is YOUR decision, not the u
 - Upgrade safety (will this survive BC major version updates?)
 - Implementation complexity vs. benefit
 - Team familiarity with the patterns
+- Scope: does every object, interface and event in the winning approach have a requirement that consumes it today?
 
 ### Step 8: Write Solution Plan
 
@@ -76,6 +77,7 @@ Write `.dev/<task-slug>/02-solution-plan.md` yourself. This is YOUR synthesis â€
 Structure:
 - Architecture & Design (approach, BC integration points, testability architecture, alternatives considered with brief rationale for rejection)
 - Implementation Plan (object allocation with names/IDs, files to create/modify, implementation sequence, assumptions and risks)
+- Scope Statement (anything in this plan beyond the literal requirement, and why it is needed now â€” or "nothing")
 
 ### Step 9: Present for Approval
 
@@ -90,5 +92,6 @@ Present the solution summary to the user using AskUserQuestion with these option
 - **Assign DIFFERENT starting points** to prevent architects from converging on the same solution. The whole point is competitive design.
 - **Challenge weak points yourself.** Do not just pick the longest or most detailed plan. Look for the one that best fits BC patterns and the specific requirements.
 - **Synthesize, don't copy.** Your solution plan should be better than any individual architect's output because it combines the best ideas from all of them.
+- **Synthesize by subtraction too.** Combining the best ideas from every architect is additive and accumulates abstraction. After picking the winner, remove every object, interface, event and setting that no current requirement consumes. Name what you removed in the Scope Statement.
 - **Follow proportional planning.** A 3-file change does not need a 500-line plan. Read `proportional-planning.md` and enforce it.
 - **Agent output is working material.** Architects write to temporary files if needed. Only your final `02-solution-plan.md` is the deliverable.

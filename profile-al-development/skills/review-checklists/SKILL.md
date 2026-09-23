@@ -33,9 +33,14 @@ Before presenting a solution plan to the user, verify:
 
 ## Checklist: Code Implementations
 
-Before presenting code to the user, verify:
+Before presenting code to the user, verify along both orthogonal review axes:
 
-- [ ] **Matches the plan** -- implementation follows the agreed solution design; deviations are explained
+### Axis 1: Spec Compliance (Functional Verification)
+- [ ] **Fulfills requirements** -- every acceptance criterion and user story from `01-requirements.md` has a working implementation
+- [ ] **No unauthorized scope creep** -- changes strictly address what was requested; no extraneous logic
+- [ ] **Matches the plan** -- implementation follows the agreed solution design; deviations are explained and justified
+
+### Axis 2: Technical Standards (Engineering Quality)
 - [ ] **AL coding standards met** -- PascalCase, namespaces, affix rules, SetLoadFields, FieldCaption errors, DataClassification, ApplicationArea (see al-coding-standards skill)
 - [ ] **Consistent naming** -- identifiers follow the same conventions throughout; no mix of styles
 - [ ] **Compiles cleanly** -- no obvious syntax errors, missing semicolons, undeclared variables, or type mismatches

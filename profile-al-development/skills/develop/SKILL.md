@@ -60,38 +60,50 @@ As developer agents work:
 - **Naming consistency:** Verify that naming conventions are consistent across all developers (prefixes, affixes, casing).
 - **Object ID usage:** Verify no duplicate object IDs across developers. Each developer should use IDs from their assigned range.
 
-## Step 6: Spawn 4 Reviewer Agents IN PARALLEL
+## Step 6: Spawn Reviewers — Dual-Axis Review (Spec Compliance vs Technical Standards)
 
-When all development is complete:
+When all development is complete, review proceeds along **two orthogonal axes** that must NOT be blended or averaged:
 
+### Axis 1: Spec Compliance (Functional Verification)
+- **Question:** Does the code do what was actually requested?
+- **Source of truth:** `.dev/<task-slug>/01-requirements.md` (and originating work item / acceptance criteria).
+- **Checklist:**
+  - [ ] Every user story and acceptance criterion from `01-requirements.md` has a working implementation.
+  - [ ] No unauthorized scope creep or extraneous changes beyond the requirement.
+  - [ ] Business logic edge cases specified in requirements are handled.
+- The Engineering Manager verifies this axis directly against the diff and requirement criteria.
+
+### Axis 2: Technical Standards (Engineering Quality)
+- **Question:** Is the code built right according to BC/AL platform best practices?
+- **Source of truth:** AL rules (`rules/al-*.md`, `rules/pwe-coding-guidelines.md`) and platform standards.
+- 4 specialist reviewer agents are spawned simultaneously using the **Agent tool**:
+  1. **Security Reviewer**
+  2. **AL Expert Reviewer**
+  3. **Performance Reviewer**
+  4. **Test Coverage Reviewer**
+
+For Axis 2:
 1. Read the reviewer prompts from `reviewer-prompts.md` in this skill directory.
 2. Collect the list of ALL AL files created by all developers.
-3. Spawn exactly 4 reviewer agents simultaneously using the **Agent tool**:
-   - **Security Reviewer**
-   - **AL Expert Reviewer**
-   - **Performance Reviewer**
-   - **Test Coverage Reviewer**
-4. Each reviewer gets:
-   - Their specific prompt section from `reviewer-prompts.md`
-   - The complete list of all AL files to review
-   - The solution plan for context
-5. Use model: **sonnet** for all reviewers.
+3. Each reviewer gets their specific section from `reviewer-prompts.md`, the file list, and the solution plan for context.
+4. Use model: **sonnet** for all reviewers.
 
-**Spawn all 4 reviewers simultaneously.**
+**Spawn all 4 technical reviewers simultaneously.**
 
 ## Step 7: Review Findings and Manage Iteration
 
-When all reviewers complete:
+When all review outputs are collected:
 
-1. **Collect** all findings from all 4 reviewers.
-2. **Categorize** each finding:
+1. **Verify Axis 1 (Spec Compliance) first:**
+   - If any requirement from `01-requirements.md` is missing, incomplete, or incorrectly implemented, this is automatically **CRITICAL**.
+   - **Rule:** A clean pass on Axis 2 (Technical Standards) can NEVER override a failure in Axis 1 (Spec Compliance). Code that follows every AL convention but implements the wrong thing is REJECTED.
+2. **Collect and categorize Axis 2 (Technical Standards) findings:**
    - **CRITICAL** — Must fix. Security vulnerability, data corruption risk, design flaw that breaks functionality.
    - **HIGH** — Should fix. Performance issue, DRY violation, missing error handling, poor pattern usage.
    - **MINOR** — Nice to have. Documentation gaps, naming style preferences, minor readability improvements.
-3. **If CRITICAL issues exist:**
+3. **If CRITICAL issues exist in either axis:**
    - Assign fixes to the appropriate developer agent(s).
-   - After fixes, re-run the relevant reviewer(s) to verify.
-   - Iterate until no CRITICAL issues remain.
+   - After fixes, re-verify the affected axis until no CRITICAL issues remain.
    - Do NOT present to the user until critical issues are resolved.
 4. **If only HIGH/MINOR issues remain:**
    - Document them for user decision.
@@ -112,23 +124,32 @@ Write `.dev/<task-slug>/03-code-review.md` with YOUR synthesis (not a copy-paste
 ## Review Process
 - Number of developers: N
 - Review iterations: N
-- Reviewers: Security, AL Expert, Performance, Test Coverage
+- Reviewers: Spec Compliance (Manager), Security, AL Expert, Performance, Test Coverage
+
+## Dual-Axis Review Verdict
+
+### Axis 1: Spec Compliance (01-requirements.md)
+- **Status:** PASSED / FAILED / PARTIAL
+- **Requirements Coverage:**
+  - [x] Requirement 1: <Implemented in Object X>
+  - [x] Requirement 2: <Implemented in Object Y>
+- **Scope Creep Check:** CLEAN (no extraneous changes)
+
+### Axis 2: Technical Standards (Specialist Consensus)
+- **Security:** APPROVED / CONCERNS
+- **AL Expert:** APPROVED / CONCERNS
+- **Performance:** APPROVED / CONCERNS
+- **Test Coverage:** APPROVED / CONCERNS
 
 ## Critical Issues Found and Fixed
-| # | Issue | Reviewer | Fix Applied |
-|---|-------|----------|-------------|
-| 1 | ... | ... | ... |
+| # | Axis | Issue | Reviewer | Fix Applied |
+|---|------|-------|----------|-------------|
+| 1 | ...  | ...   | ...      | ...         |
 
 ## Issues for User Decision
-| # | Issue | Severity | Reviewer | Recommendation |
-|---|-------|----------|----------|----------------|
-| 1 | ... | HIGH/MINOR | ... | ... |
-
-## Review Consensus
-- Security: APPROVED / CONCERNS
-- AL Expert: APPROVED / CONCERNS
-- Performance: APPROVED / CONCERNS
-- Test Coverage: APPROVED / CONCERNS
+| # | Axis | Issue | Severity | Reviewer | Recommendation |
+|---|------|-------|----------|----------|----------------|
+| 1 | ...  | ...   | HIGH/MINOR | ...    | ...            |
 
 ## Recommendation
 <Your synthesized recommendation to the user>

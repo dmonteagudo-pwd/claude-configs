@@ -36,6 +36,7 @@ Spawn a subagent (medium thoroughness) to explore the AL project. The agent must
 5. **Common code locations** — Where utilities live, where business logic concentrates, where UI logic lives.
 6. **Dependencies** — app.json dependencies, runtime version, target platform.
 7. **Testing infrastructure** — Test codeunits, test runners, any test helper utilities.
+8. **Domain vocabulary / Ubiquitous language** — Identify project-specific business terms, acronyms, and vertical concepts (from comments, object names, and functional docs) and capture them as concise 1-line definitions.
 
 Instruct the agent to be thorough but not exhaustive — aim for the information another developer (or agent) would need to start contributing within minutes.
 
@@ -92,6 +93,14 @@ project-root/
 ├── app.json
 └── ...
 ```
+
+## Ubiquitous Language / Domain Vocabulary
+
+> Concise domain glossary defining client, vertical, and BC-specific business concepts. Keep definitions to 1-2 lines. This prevents terminology ambiguity and avoids verbose paraphrasing in /interview, /plan, and /develop.
+
+| Domain Term | Business Meaning in this Project | Standard BC Counterpart / Disambiguation |
+|---|---|---|
+| (Term) | Brief explanation of what it means functionally | How it maps to or differs from standard BC |
 
 ## Key Objects Registry
 

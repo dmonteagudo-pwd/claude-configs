@@ -71,14 +71,17 @@ Design your solution following BC conventions:
 - Event architecture (publishers, subscribers)
 - Enum design (if extensible values needed)
 
-### 6. Design Testability Architecture (MANDATORY)
+### 6. Design Testability Architecture (proportional)
 
-This is not optional. For every solution, explicitly address:
-- **Dependencies to inject**: What external dependencies does the business logic have? (Database access, date/time, external services, user input)
-- **Interfaces to define**: What interfaces are needed to enable dependency injection?
-- **Injection points**: Where and how are dependencies injected? (Constructor, method parameter, setup method)
-- **Pure vs. impure classification**: Which codeunits/methods are pure business logic (testable without mocking) vs. impure (require mocking)?
-- **Mock strategy**: What needs to be mocked in tests? How?
+Address testability at the depth the solution needs, not at a fixed depth.
+
+- **SIMPLE** — one line: what a test asserts and which event or procedure it hooks. No interfaces, no injection, no mock strategy.
+- **MEDIUM** — identify impure dependencies (database access, date/time, external services, user input) and say how tests reach them. Introduce an interface only where a test cannot otherwise reach the logic.
+- **COMPLEX** — full treatment: dependencies to inject, interfaces to define, injection points, pure vs. impure classification, mock strategy.
+
+Define an interface when the current design has two or more real implementations of one contract (carrier integrations, payment providers, interchangeable strategies), or when it breaks a dependency the architecture rules forbid. One implementation and no stated second one means no interface.
+
+Never define an interface, publish an event or add a setup field whose only consumer is a hypothetical future requirement. Record it under Assumptions & Risks instead.
 
 ### 7. Plan Implementation
 
@@ -106,13 +109,10 @@ Write your solution to the file path specified (or return it in your response if
 ### BC Integration
 <How this integrates with standard BC — tables extended, events subscribed, pages modified>
 
-### Testability Architecture
-- **Dependencies:** <list of external dependencies>
-- **Interfaces:** <interfaces to define for DI>
-- **Injection Points:** <how dependencies are injected>
-- **Pure Logic:** <codeunits/methods that are pure business logic>
-- **Impure Logic:** <codeunits/methods that need mocking>
-- **Mock Strategy:** <what to mock and how>
+### Testability
+<SIMPLE: one line — what a test asserts and where it hooks.
+MEDIUM/COMPLEX: dependencies; interfaces, each with the second implementation
+that justifies it; injection points; pure/impure split; mock strategy.>
 
 ### Alternatives Considered
 <If your constraint led you away from an obvious choice, note it briefly>
@@ -149,7 +149,7 @@ Write your solution to the file path specified (or return it in your response if
 
 When you finish, provide a concise summary:
 - Architecture overview (2-3 sentences)
-- Testability status (dependencies identified, interfaces planned)
+- Testability status (depth applied, and what justifies any interface you defined)
 - Complexity classification
 - MCP tools used (if any) and what you learned
 - Key risks or concerns
