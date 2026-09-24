@@ -1,0 +1,2 @@
+# Git hooks run under bash: a CRLF checkout breaks them with $'\r' errors.
+.githooks/* text eol=lf
