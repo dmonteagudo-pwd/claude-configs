@@ -5,6 +5,8 @@ globs: ["**/*.al"]
 
 # AL Naming Rules
 
+> 🚨 **PRODWARE WORKSPACE OVERRIDE:** If `profile-bc-prodware` is active or working in a Prodware workspace, this entire file is **FULLY SUPPRESSED**. Do NOT apply these rules. Follow `rules/pwe-architecture.md` §2 and `rules/pwe-coding-guidelines.md` instead (Prodware mandates CRS prefixes on objects and extension fields).
+
 ## PascalCase Everywhere
 
 PascalCase for ALL identifiers — objects, variables, fields, procedures, parameters, properties. No exceptions. No spaces or special characters in any identifier name.
