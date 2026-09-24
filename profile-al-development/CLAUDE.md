@@ -79,3 +79,19 @@ The files in this plugin's `rules/` directory hold the standing AL guardrails. C
 | `rules/al-conventions.md` | any `.al` edit, for house style |
 
 Resolve `rules/` against this plugin's own directory. If a project overlay (e.g. `profile-bc-prodware`) supplies stricter AL rules, those take precedence.
+
+## Compact instructions
+
+When `/compact` or auto-compact runs, preserve these in the summary:
+- Active task slug (`.dev/<task-slug>/`) and its current phase (`/interview`, `/plan`, `/develop`, `/test`, `/fix`).
+- Implemented and modified AL objects registry (IDs, object types, names, file paths).
+- Test execution results (passing count, failing methods, edge cases verified).
+- Key architectural decisions, interface contracts, and explicit user approvals.
+- Next immediate technical action.
+
+Discard:
+- Raw compiler error traces, temporary terminal dumps, and intermediate build outputs.
+- Early exploratory search results and file listings that did not yield changes.
+- Internal debate transcripts or draft solution plans superseded by the winning design.
+- Verbose diff outputs already committed or reviewed.
+
