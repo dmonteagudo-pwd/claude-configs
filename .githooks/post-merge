@@ -89,3 +89,9 @@ if "bc-telemetry-buddy" in srv and srv["bc-telemetry-buddy"].get("command") == "
     print(f"fix-upstream-paths: wrapped bctb-mcp with bash -c in {path}")
 PYEOF
 fi
+
+# ── 3. Republish the plugins to Antigravity (script lives in claude-configs-bc) ──
+SYNC_AGY="$(dirname "$REPO_ROOT")/claude-configs-bc/tools/sync-antigravity.mjs"
+if [[ -f "$SYNC_AGY" ]]; then
+  node "$SYNC_AGY" --quiet || echo "fix-upstream-paths: sync-antigravity failed; run it by hand: node $SYNC_AGY"
+fi
