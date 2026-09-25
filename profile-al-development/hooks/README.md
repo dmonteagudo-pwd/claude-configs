@@ -1,18 +1,14 @@
-# Hooks — disabled
+# Hooks — none shipped
 
-`hooks.json` is renamed to `hooks.json.disabled`. Claude Code only auto-discovers
-`hooks/hooks.json`, so the renamed file registers nothing.
+This plugin registers no hooks: there is no `hooks/hooks.json`.
 
-Reason (audited 2026-09-12): both scripts are POSIX shell invoked directly by path,
-which does not execute on Windows. They also depend on `python3`, `realpath` and a
-`/tmp` queue file, and `al-hook-compile.sh` exits early on every run because the
-`al-compile` executable it probes for does not exist:
+The former `PostToolUse` compile hooks were removed (audited 2026-09-12). They were POSIX
+shell scripts invoked by path, which does not execute on Windows; they depended on
+`python3`, `realpath` and a `/tmp` queue file; and `al-hook-compile.sh` exited early on
+every run because the `al-compile` executable it probed for does not exist. Their
+`Edit|Write` recorder also duplicated the one that `profile-bc-prodware/hooks/alsort.js`
+registers.
 
-    command -v al-compile >/dev/null 2>&1 || { rm -f "$QUEUE_FILE"; exit 0; }
-
-The `PostToolUse` `Edit|Write` recorder also duplicates the one that
-`profile-bc-prodware/hooks/alsort.js` already registers.
-
-Compilation in this workspace goes through `/al-compile`, which wraps
-`scripts/compile_alc/Compile-Alc.ps1`. To re-enable these hooks, port both scripts to
-PowerShell (or Node, as `alsort.js` is) and rename the file back.
+Compilation goes through the overlay plugin's route (`/al-compile` in the Prodware
+workspace, which wraps `scripts/compile_alc/Compile-Alc.ps1`). To reintroduce hooks here,
+write them in Node (as `alsort.js` is) and add `hooks/hooks.json`.

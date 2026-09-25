@@ -32,9 +32,9 @@ Set a page-level default where all fields share the same area (almost always `Ap
 
 ## Compiler Diagnostics
 
-The compile hook enforces errors as hard stops. Warnings and infos from any analyzer — whether or not they are part of the configured hook — must also be addressed:
+No hook compiles automatically: compile through the project's build route (see the `build-tools` skill) and address every diagnostic it reports, from any analyzer:
 
-- **Errors**: must be fixed before the turn ends (enforced by hook).
+- **Errors**: must be fixed before the turn ends. A build with errors is not done.
 - **Warnings**: must be fixed. No warning may be left in place without resolution.
 - **Infos**: must be considered. Fix them unless the effort is clearly disproportionate to the gain. When in doubt, fix it — infos exist because the analyzer author considered them worth flagging.
 
