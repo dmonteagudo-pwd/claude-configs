@@ -128,6 +128,23 @@ git pull
 
 All your projects immediately benefit from the updates without any additional configuration.
 
+### Git hooks (`.githooks/`)
+
+The repository sets `core.hooksPath` to `.githooks`. On a new clone, run `git config core.hooksPath .githooks` once, or the hooks below never run.
+
+`post-merge` runs after every `git pull` or `git merge` and normalizes what the upstream fork brings in:
+
+1. Removes upstream files this fork does not use (`profile-al-development/.mcp.jsonc`).
+2. Renames `profile-al-development/hooks/hooks.json` to `hooks.json.disabled`, because its scripts are POSIX-only.
+3. Removes the Linux- or Docker-only skills (`al-symbols`, `compile`, `bc-source`, `local-bc`, `al-mutate`) and the stale `CLAUDE.md.v2-backup` / `CLAUDE.md.v3-backup` files.
+4. Replaces the upstream author's `/home/stefan/claude-configs` paths with `~/claude-configs` in `.mcp.json`, `bctb-config.json` and `README.md`.
+5. Wraps `bctb-mcp` in `bash -c` inside `.mcp.json` so `~` expands on Windows (needs `python3`).
+6. Runs `claude-configs-bc/tools/sync-antigravity.mjs --quiet` when that sibling checkout exists. A sync failure prints a message and does not fail the merge.
+
+The hook edits the working tree. After a pull, review `git status` and commit what it changed.
+
+`pre-commit` runs `tools/ensure-plugin-version.mjs` (plugin version bump) and rejects staged `.json` files with invalid syntax.
+
 ## Available Plugins
 
 ### profile-al-development
