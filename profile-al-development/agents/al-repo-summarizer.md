@@ -1,6 +1,6 @@
 ---
 name: al-repo-summarizer
-description: "Use this agent when the user wants to understand an AL (Business Central) repository or project structure without reading every file. This includes when they ask for an overview, summary, or explanation of an existing AL codebase, when they're onboarding to a new AL project, or when they need to understand the purpose and architecture of AL extensions.\\n\\nExamples:\\n\\n- User: \"Can you give me an overview of this AL project?\"\\n  Assistant: \"I'll use the AL repo summarizer agent to analyze the project structure and give you a comprehensive overview.\"\\n  (Use the Agent tool to launch the al-repo-summarizer agent)\\n\\n- User: \"I just cloned this Business Central extension and I have no idea what it does\"\\n  Assistant: \"Let me use the AL repo summarizer agent to walk through the codebase and explain what this extension is about.\"\\n  (Use the Agent tool to launch the al-repo-summarizer agent)\\n\\n- User: \"What tables, pages, and codeunits are in this project and how do they relate?\"\\n  Assistant: \"I'll launch the AL repo summarizer agent to map out the object relationships for you.\"\\n  (Use the Agent tool to launch the al-repo-summarizer agent)"
+description: "Summarizes an AL (Business Central) repository (purpose, object inventory, functional domain, architecture) for overviews, onboarding or mapping object relationships without reading every file."
 model: sonnet
 ---
 
