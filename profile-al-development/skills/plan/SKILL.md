@@ -1,6 +1,7 @@
 ---
 name: plan
 description: Design complete AL/BC solution using competitive solution design. Spawns 2-3 architect agents who debate approaches, then synthesizes winning plan.
+disable-model-invocation: true
 ---
 
 # Solution Planning Orchestration

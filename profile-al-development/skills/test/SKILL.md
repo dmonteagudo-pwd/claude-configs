@@ -1,6 +1,7 @@
 ---
 name: test
 description: Develop comprehensive test suite using 4 parallel test engineer agents. Covers unit, integration, scenario, and edge case testing.
+disable-model-invocation: true
 ---
 
 # /test — Engineering Manager Orchestration
@@ -63,7 +64,7 @@ Use the **Agent tool** to spawn all 4 engineers simultaneously. Each agent recei
 4. Their assigned ID range (from Step 4)
 5. The project's `app.json` context (name, ID range, dependencies)
 
-**Model: sonnet** for all 4 agents.
+**Model: opus** for all 4 agents. Test code is AL: CentralGauge ranks Opus 5.5 far above the smaller models on AL generation.
 
 Each agent prompt must include:
 - The test scenarios assigned to them (specific, not vague)

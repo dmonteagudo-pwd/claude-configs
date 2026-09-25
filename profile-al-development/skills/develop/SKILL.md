@@ -1,6 +1,7 @@
 ---
 name: develop
 description: Implement AL/BC solution using parallel development agents and 4-specialist review team. Spawns N developer agents for parallel modules, then 4 reviewer agents for comprehensive code review.
+disable-model-invocation: true
 ---
 
 # /develop — Engineering Manager Orchestration
@@ -39,7 +40,7 @@ Document the partition clearly before spawning agents.
 
 ## Step 4: Spawn AL Developer Agents IN PARALLEL
 
-Use the **Agent tool** to spawn developer agents in parallel.
+Use the **Agent tool** to spawn developer agents in parallel. **Hard limit: 4 developer agents.** If the partition needs more, merge modules or run a second phase after the first finishes.
 
 For each developer agent:
 1. Read the full prompt from `al-developer-prompt.md` in this skill directory.

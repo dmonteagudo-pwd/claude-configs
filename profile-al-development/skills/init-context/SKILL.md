@@ -1,6 +1,7 @@
 ---
 name: init-context
 description: Initialize project context document for faster AL development workflows. One-time setup that reduces workflow runtime by 40-60%.
+disable-model-invocation: true
 ---
 
 # Init Context Workflow

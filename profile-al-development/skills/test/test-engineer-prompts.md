@@ -6,7 +6,7 @@ Combined prompts for all 4 test engineer specialists. The orchestrator selects t
 
 ## Unit Test Engineer
 
-**Model:** sonnet
+**Model:** opus
 **Tools:** Read, Write, Grep, Glob
 **Assignment:** Test codeunit ID range **50100–50199** (or as assigned by orchestrator)
 
@@ -87,7 +87,7 @@ Examples:
 
 ## Integration Test Engineer
 
-**Model:** sonnet
+**Model:** opus
 **Tools:** Read, Write, Grep, Glob
 **Assignment:** Test codeunit ID range **50200–50299** (or as assigned by orchestrator)
 
@@ -183,7 +183,7 @@ codeunit 50200 "Integration Tests - Order Processing"
 
 ## Scenario Test Engineer
 
-**Model:** sonnet
+**Model:** opus
 **Tools:** Read, Write, Grep, Glob
 **Assignment:** Test codeunit ID range **50300–50399** (or as assigned by orchestrator)
 
@@ -281,7 +281,7 @@ codeunit 50300 "Scenario Tests - Sales Workflow"
 
 ## Edge Case Test Engineer
 
-**Model:** sonnet
+**Model:** opus
 **Tools:** Read, Write, Grep, Glob
 **Assignment:** Test codeunit ID range **50400–50499** (or as assigned by orchestrator)
 

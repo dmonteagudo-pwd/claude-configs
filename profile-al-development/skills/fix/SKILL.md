@@ -30,7 +30,7 @@ Read the user's description and classify into one of three tiers:
 - Fix an incorrect property value: `Editable = true` → `Editable = false`
 - Remove a duplicate line
 
-**Action**: Spawn a quick-fix agent using the **sonnet** model. Load prompt from `quick-fix-prompt.md` in this skill folder. (Note: Do not use Haiku — CentralGauge AL benchmark shows Haiku 4.5 has only a 19.8% repair rate on AL code, leading to broken syntax even on trivial edits).
+**Action**: Spawn a quick-fix agent using the **sonnet** model. Load prompt from `quick-fix-prompt.md` in this skill folder. (Do not use Haiku: CentralGauge ranks Haiku 4.5 at 47.2 Solve AUC@2 on AL, against 88.3 for Opus 5.5.)
 
 **Cost**: ~200 tokens, 1-2 minutes.
 
@@ -45,7 +45,7 @@ Read the user's description and classify into one of three tiers:
 - Fix event subscriber parameters that don't match the publisher signature
 - Add a missing permission to a permission set
 
-**Action**: Spawn an al-developer agent using `model: opus`. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files). With Opus 5.5's 85.2% AL repair rate, compiler and signature errors are resolved cleanly on the first pass.
+**Action**: Spawn an al-developer agent using `model: opus`. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files). Opus 5.5 leads CentralGauge on AL (88.3 Solve AUC@2).
 
 **Cost**: ~300 tokens, 3-5 minutes.
 
