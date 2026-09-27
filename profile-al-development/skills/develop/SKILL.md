@@ -48,7 +48,7 @@ For each developer agent:
 3. Assign their specific module and files from the partition.
 4. Provide the path to the solution plan: `.dev/<task-slug>/02-solution-plan.md`
 5. Provide the path to project context: `.dev/project-context.md`
-6. Reference coding standards from this plugin's `rules/` directory (or project overlay `profile-bc-prodware/rules/pwe-coding-guidelines.md`).
+6. Reference coding standards from this plugin's `rules/` directory (or project overlay `profile-bc-prodware/rules/pwe-coding-guidelines.md` plus the `pwe-coding-*` topic files its index names for the task).
 7. Use model: **opus** for code quality (on Opus 5.5, standard/medium effort achieves high precision with low false alarms; do not force maximum effort loops).
 **Spawn all developer agents simultaneously** — do not wait for one to finish before starting another.
 
@@ -75,7 +75,7 @@ When all development is complete, review proceeds along **two orthogonal axes** 
 
 ### Axis 2: Technical Standards (Engineering Quality)
 - **Question:** Is the code built right according to BC/AL platform best practices?
-- **Source of truth:** AL rules (`rules/al-*.md`, `rules/pwe-coding-guidelines.md`) and platform standards.
+- **Source of truth:** AL rules (`rules/al-*.md`, `rules/pwe-coding-guidelines.md` and every `pwe-coding-*` topic file whose index row matches the diff) and platform standards.
 - 4 specialist reviewer agents are spawned simultaneously using the **Agent tool**:
   1. **Security Reviewer**
   2. **AL Expert Reviewer**
