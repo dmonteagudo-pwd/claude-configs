@@ -27,7 +27,7 @@ All test codeunits must follow the AL Test Framework pattern:
 codeunit 50100 "Unit Tests - Credit Limit"
 {
     Subtype = Test;
-    TestPermissions = Disabled;
+    TestPermissions = NonRestrictive;
 
     [Test]
     procedure ValidateCreditLimit_NegativeAmount_ThrowsError()
@@ -108,7 +108,7 @@ Integration tests verify cross-object data flow and event behavior:
 codeunit 50200 "Integration Tests - Order Processing"
 {
     Subtype = Test;
-    TestPermissions = Disabled;
+    TestPermissions = NonRestrictive;
 
     [Test]
     procedure PostSalesOrder_WithCustomDiscount_UpdatesCustomerLedger()
@@ -204,7 +204,7 @@ Scenario tests simulate complete user workflows:
 codeunit 50300 "Scenario Tests - Sales Workflow"
 {
     Subtype = Test;
-    TestPermissions = Disabled;
+    TestPermissions = NonRestrictive;
 
     [Test]
     procedure CompleteSalesWorkflow_CreateToPost_ProducesInvoice()
@@ -314,7 +314,7 @@ Edge case tests probe system boundaries:
 codeunit 50400 "Edge Case Tests - Credit Limit"
 {
     Subtype = Test;
-    TestPermissions = Disabled;
+    TestPermissions = NonRestrictive;
 
     [Test]
     procedure ValidateCreditLimit_ZeroAmount_Succeeds()
