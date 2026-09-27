@@ -1,6 +1,7 @@
 ---
 name: publish
 description: Deploy the compiled AL app to a Business Central server using bc-publish. Requires .bcconfig.json configuration.
+disable-model-invocation: true
 ---
 
 # /publish — Deploy to BC Server
