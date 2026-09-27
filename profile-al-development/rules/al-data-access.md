@@ -7,12 +7,10 @@ globs: ["**/*.al"]
 
 ## Before Any Data Access
 
-Before every record retrieval operation (`Get`, `FindFirst`, `FindLast`, `FindSet`, `FindLast`), set both:
+Before every record retrieval operation (`Get`, `FindFirst`, `FindLast`, `FindSet`), decide both:
 
-1. **`SetLoadFields`** — load only the fields you will actually use. Reading a full record to access one field is a defect.
-2. **`ReadIsolation`** — specify the appropriate isolation level explicitly. Do not rely on the default. Common choices: `ReadIsolation::ReadUncommitted` for read-only reporting, `ReadIsolation::ReadCommitted` for transactional reads, `ReadIsolation::UpdLock` when the record will be modified.
-
-Both must be set before every retrieval, not just some.
+1. **`SetLoadFields`** — load only the fields you will actually use. Reading a full record to access one field is a defect. Set it before every retrieval.
+2. **`ReadIsolation`** — decide the isolation level before the read, and set it only when the default is wrong. For ordinary reads, leave the default: the runtime chooses the level per table, and tri-state locking (always on from v26) reads with `ReadCommitted` after writes. Raise it with `Rec.ReadIsolation := IsolationLevel::UpdLock` when the read decides a write (read-then-modify, next entry number, balance or stock check). Lower it with `IsolationLevel::ReadUncommitted` only where a dirty read is acceptable (estimated counts, cues, dashboards), never when the result drives a write, a validation or a posting.
 
 ## FlowFields
 
