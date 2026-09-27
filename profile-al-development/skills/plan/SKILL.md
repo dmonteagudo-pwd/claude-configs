@@ -36,7 +36,7 @@ Follow the proportional planning guidelines in `proportional-planning.md` from t
 
 ### Step 5: Spawn Solution Architect Agents IN PARALLEL
 
-Use the Agent tool to spawn 2-3 agents simultaneously, each with `model: opus`. BC/AL solution architecture is knowledge- and reasoning-intensive; use the strongest model here — quality of the design outweighs token cost, and a weaker model that iterates more or designs worse is the false economy. (Note: with Opus 5.5, native reasoning delivers thorough architectures at standard effort without requiring artificial thinking prompts). Each agent gets:
+Use the Agent tool to spawn 2-3 agents simultaneously, each with `model: opus`. BC/AL solution architecture is knowledge- and reasoning-intensive; use the strongest model here — quality of the design outweighs token cost, and a weaker model that iterates more or designs worse is the false economy. Each agent gets:
 - The full prompt from `solution-architect-prompt.md` in this skill's directory
 - The requirements (from file or user input)
 - The project context (if available)

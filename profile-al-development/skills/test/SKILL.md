@@ -41,9 +41,20 @@ Analyze the implemented code and categorize every testable behavior into exactly
 
 Create a concrete list of specific test scenarios for each category. Be explicit — assign SPECIFIC scenarios, not just "write tests."
 
+### Team size
+
+Scale the team to the code under test. Every engineer stays on `model: opus`.
+
+| Implemented AL objects | Engineers | Split |
+|------|------|------|
+| 1–3 | 1–2 | Unit + Edge Case in one agent, Integration + Scenario in the other. One agent when only one pair has scenarios. |
+| 4 or more | 4 | One per type. |
+
+A merged agent receives both sections of `test-engineer-prompts.md` and both ID ranges.
+
 ## Step 4: Assign Object ID Ranges
 
-Assign non-overlapping ID ranges to avoid conflicts between the 4 engineers:
+Assign non-overlapping ID ranges to avoid conflicts between the engineers:
 
 | Engineer | ID Range | Purpose |
 |----------|----------|---------|
@@ -54,9 +65,9 @@ Assign non-overlapping ID ranges to avoid conflicts between the 4 engineers:
 
 Adjust ranges based on the project's `app.json` ID range and any already-used IDs. Check for conflicts before assigning.
 
-## Step 5: Spawn 4 Test Engineer Agents IN PARALLEL
+## Step 5: Spawn the Test Engineer Agents IN PARALLEL
 
-Use the **Agent tool** to spawn all 4 engineers simultaneously. Each agent receives:
+Use the **Agent tool** to spawn all engineers from the team-size table simultaneously. Each agent receives:
 
 1. Their specific section from `test-engineer-prompts.md`
 2. The full list of implemented AL files (with paths)
@@ -64,7 +75,7 @@ Use the **Agent tool** to spawn all 4 engineers simultaneously. Each agent recei
 4. Their assigned ID range (from Step 4)
 5. The project's `app.json` context (name, ID range, dependencies)
 
-**Model: opus** for all 4 agents. Test code is AL: CentralGauge ranks Opus 5.5 far above the smaller models on AL generation.
+**Model: opus** for every agent. Test code is AL, and everything that writes AL runs on Opus.
 
 Each agent prompt must include:
 - The test scenarios assigned to them (specific, not vague)
@@ -214,7 +225,7 @@ Use **AskUserQuestion** (BLOCKING):
 1. **Assign SPECIFIC scenarios** to each engineer, never just "write tests for X"
 2. **Never present failing tests** to the user — fix them first
 3. **Use bc-test features**: auto-detect from `app.json`, `--failures-only`, `-o` for file output
-4. **All 4 agents run in PARALLEL** — do not run sequentially
+4. **All agents run in PARALLEL** — do not run sequentially; team size follows the Step 3 table
 5. **ID ranges must not overlap** — verify before and after agent execution
 6. **One test per behavior** — no multi-assertion mega-tests
 7. **The adversary always runs** — Step 8.5 is not optional. "All tests pass" is not a quality signal on its own.

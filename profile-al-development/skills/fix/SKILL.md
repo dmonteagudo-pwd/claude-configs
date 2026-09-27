@@ -5,11 +5,11 @@ description: Lightweight bug fix workflow. 3-tier classification for fast iterat
 
 # Fix Workflow
 
-You are an engineering manager orchestrating a quick bug fix. Your job is to classify the fix, delegate to the right agent, and verify the result. You do NOT implement fixes yourself.
+You are an engineering manager orchestrating a quick bug fix. Your job is to classify the fix, apply Tier 1 edits yourself, delegate Tier 2-3 to the right agent, and verify the result.
 
 ## Core Rules
 
-- **NEVER implement fixes yourself.** There is no "tier 0." Always delegate to a subagent.
+- **Only Tier 1 is applied in the main session.** Tier 2 and Tier 3 are always delegated to a subagent.
 - **No approval gates.** Speed is the priority. Classify, delegate, verify.
 - **Always verify compilation** after the fix is applied (run `al-compile`).
 - **When in doubt, go one tier UP.** A Tier 2 fix misclassified as Tier 1 wastes more time than the reverse.
@@ -30,9 +30,7 @@ Read the user's description and classify into one of three tiers:
 - Fix an incorrect property value: `Editable = true` → `Editable = false`
 - Remove a duplicate line
 
-**Action**: Spawn a quick-fix agent using the **sonnet** model. Load prompt from `quick-fix-prompt.md` in this skill folder. (Do not use Haiku: CentralGauge ranks Haiku 4.5 at 47.2 Solve AUC@2 on AL, against 88.3 for Opus 5.5.)
-
-**Cost**: ~200 tokens, 1-2 minutes.
+**Action**: Apply the edit yourself in the main session, following the rules in `quick-fix-prompt.md` in this skill folder. Everything that writes AL runs on Opus, Tier 1 included. If the session does not run on Opus, spawn one quick-fix agent with `model: opus` and that prompt instead; never Sonnet or Haiku for AL.
 
 #### TIER 2 — SMALL FIX REQUIRING AL KNOWLEDGE
 
@@ -45,9 +43,7 @@ Read the user's description and classify into one of three tiers:
 - Fix event subscriber parameters that don't match the publisher signature
 - Add a missing permission to a permission set
 
-**Action**: Spawn an al-developer agent using `model: opus`. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files). Opus 5.5 leads CentralGauge on AL (88.3 Solve AUC@2).
-
-**Cost**: ~300 tokens, 3-5 minutes.
+**Action**: Spawn an al-developer agent using `model: opus`. Load the prompt from `../develop/al-developer-prompt.md` (use a condensed briefing — skip architecture exploration, point directly to the relevant files).
 
 #### TIER 3 — NON-TRIVIAL
 
@@ -65,20 +61,18 @@ Read the user's description and classify into one of three tiers:
 3. Spawn an architect agent (`model: opus`) to analyze the root cause and produce a fix plan.
 4. Then spawn an al-developer agent (`model: opus`) to implement the fix plan.
 
-**Cost**: ~500 tokens, 10-20 minutes.
-
 ### Step 2: Delegate
 
-Announce the tier classification to the user (one line), then immediately spawn the appropriate agent. Do not wait for confirmation.
+Announce the tier classification to the user (one line), then immediately apply the Tier 1 edit or spawn the appropriate agent. Do not wait for confirmation.
 
 Format:
 ```
-Classified as TIER {n}: {one-line reason}. Delegating now.
+Classified as TIER {n}: {one-line reason}. Applying now. | Delegating now.
 ```
 
 ### Step 3: Verify
 
-After the agent completes:
+After the edit or the agent completes:
 
 1. Confirm compilation passes (`al-compile`).
 2. For Tier 2-3: verify the fix addresses the reported issue (read the changed code).
