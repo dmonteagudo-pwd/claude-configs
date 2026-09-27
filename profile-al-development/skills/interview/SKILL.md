@@ -1,6 +1,7 @@
 ---
 name: interview
 description: Deep requirements gathering through structured interview with specialist agent. Use when requirements are unclear, ambiguous, or complex.
+disable-model-invocation: true
 ---
 
 # Interview Orchestration

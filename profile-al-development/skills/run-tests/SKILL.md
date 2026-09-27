@@ -1,6 +1,7 @@
 ---
 name: run-tests
 description: Execute AL test codeunits. Use al-runner for fast pure-logic tests (no BC required). Use bc-test for full integration tests against a running BC instance.
+disable-model-invocation: true
 ---
 
 # /run-tests — Execute AL Tests
