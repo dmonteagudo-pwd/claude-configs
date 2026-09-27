@@ -152,11 +152,16 @@ Use interfaces for external dependencies to enable testability and mocking.
 ### Events for Extensibility
 ```al
 [IntegrationEvent(false, false)]
-local procedure OnBeforePostDocument(var Document: Record "CXT Document"; var IsHandled: Boolean)
+local procedure OnBeforePostDocument(var Document: Record "CXT Document")
+begin
+end;
+
+[IntegrationEvent(false, false)]
+local procedure OnAfterPostDocument(var Document: Record "CXT Document")
 begin
 end;
 ```
-Raise integration events before/after key operations. Follow the `IsHandled` pattern for overridable behavior.
+Raise positive integration events before/after key operations: subscribers add behaviour, nothing in the base flow is skipped. For replaceable behaviour, prefer an interface or an `OnSkip` event with a granular flag. Use the `IsHandled` pattern only as a documented last resort, when no better extension point exists.
 
 ### DRY / SOLID Principles
 - Before writing logic, **check if it already exists** in the codebase (use Grep/Glob).
@@ -239,12 +244,12 @@ codeunit 50101 "CXT Sales Event Sub."
 {
     SingleInstance = true;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", OnBeforePostSalesDoc, '', false, false)]
-    local procedure OnBeforePostSalesDoc(var SalesHeader: Record "Sales Header"; var IsHandled: Boolean)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", OnAfterPostSalesDoc, '', false, false)]
+    local procedure OnAfterPostSalesDoc(var SalesHeader: Record "Sales Header"; SalesInvHdrNo: Code[20])
     begin
-        if IsHandled then
+        if SalesInvHdrNo = '' then
             exit;
-        // Custom logic here
+        // Custom logic here: the document is posted, nothing in the base flow is skipped
     end;
 }
 ```

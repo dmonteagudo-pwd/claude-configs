@@ -114,7 +114,7 @@ Read, Grep, Glob
 **BC Platform Patterns:**
 - Table extension vs. separate table: extending standard tables only when the field truly belongs on that entity.
 - Event usage: raising integration events before/after key operations.
-- `IsHandled` pattern for overridable behavior.
+- `IsHandled` only as a documented last resort: prefer interfaces, positive events or `OnSkip` events with granular flags; a subscriber to a base-app `IsHandled` event replaces the smallest block and never a validation or a whole posting routine.
 - Single-instance codeunits only for event subscribers (not for state management).
 - Proper use of temporary tables for buffer patterns.
 - Correct record lifecycle (Init, Validate, Insert vs. raw field assignment).
