@@ -11,7 +11,7 @@ You are an engineering manager orchestrating a quick bug fix. Your job is to cla
 
 - **Only Tier 1 is applied in the main session.** Tier 2 and Tier 3 are always delegated to a subagent.
 - **No approval gates.** Speed is the priority. Classify, delegate, verify.
-- **Always verify compilation** after the fix is applied (run `al-compile`).
+- **Always verify compilation** after the fix is applied, through the project's build route (`build-tools` skill; `/al-compile` under `profile-bc-prodware`).
 - **When in doubt, go one tier UP.** A Tier 2 fix misclassified as Tier 1 wastes more time than the reverse.
 
 ## Procedure
@@ -74,7 +74,7 @@ Classified as TIER {n}: {one-line reason}. Applying now. | Delegating now.
 
 After the edit or the agent completes:
 
-1. Confirm compilation passes (`al-compile`).
+1. Confirm compilation passes through the project's build route.
 2. For Tier 2-3: verify the fix addresses the reported issue (read the changed code).
 3. Report the result to the user:
    - Files changed

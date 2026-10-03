@@ -14,10 +14,10 @@ You are an engineering manager orchestrating the creation of technical documenta
 Gather the inputs the docs-writer will need:
 
 1. **AL source files** — Identify all .al files related to the feature. Check for tables, pages, codeunits, enums, reports, and extensions.
-2. **Solution plan** — Check `.dev/<task-slug>/solution-plan.md` or similar. If available, this is the primary input.
-3. **Code review** — Check `.dev/<task-slug>/code-review.md` if available.
-4. **Test results** — Check `.dev/<task-slug>/test-plan.md` or test codeunits.
-5. **Requirements** — Check `.dev/<task-slug>/requirements.md` or ask the user what the feature does.
+2. **Solution plan** — Check `.dev/<task-slug>/02-solution-plan.md`. If available, this is the primary input.
+3. **Code review** — Check `.dev/<task-slug>/03-code-review.md` if available.
+4. **Test results** — Check `.dev/<task-slug>/05-test-plan.md` or the test codeunits.
+5. **Requirements** — Check `.dev/<task-slug>/01-requirements.md`, or ask the user what the feature does.
 
 If no task slug is apparent, ask the user which feature to document.
 

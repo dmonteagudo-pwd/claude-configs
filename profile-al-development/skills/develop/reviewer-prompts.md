@@ -42,7 +42,7 @@ Read, Grep, Glob
 **Common AL Security Anti-Patterns:**
 - `Permissions = tabledata "G/L Entry" = RIMD` — overly broad; should be `R` if only reading.
 - Missing input validation on `OnValidate` triggers for fields that accept external input.
-- API pages exposing internal fields (SystemId, SystemCreatedAt) without reason.
+- API pages exposing internal audit fields (`SystemCreatedBy`, `SystemModifiedBy`) without reason. `SystemId` as the API key field is expected, not a finding.
 - `HttpClient` calls without error handling or timeout configuration.
 - Hardcoded URLs, credentials, or API keys (search for these explicitly).
 
@@ -97,37 +97,36 @@ Read, Grep, Glob
 ### Review Focus Areas
 
 **Naming Conventions:**
-- PascalCase for all identifiers (procedures, variables, fields, objects).
-- Proper affix usage matching the registered app prefix.
-- Descriptive object names following `<Affix> <Entity> <Purpose>` pattern.
+- Affixes, object-name pattern and casing follow the active naming rule (the project overlay's rules when the manager names them, otherwise `rules/al-naming.md`). Report deviations from that rule, not from a pattern of your own.
+- Descriptive object names.
 - Consistent naming across related objects (table, page, codeunit for same entity).
 - Label variable names that describe their content (not `Lbl1`, `Lbl2`).
 
 **AL Best Practices:**
-- `SetLoadFields` before every `Get`/`Find` operation.
+- `SetLoadFields` on read paths, per the active data-access rule; never on a record that is inserted, deleted, renamed, used in `TransferFields` or copied to a temporary record.
 - `FieldCaption` in error messages (never hardcoded field names).
 - Label variables for all user-facing text (errors, messages, confirmations).
 - XML documentation comments on public procedures.
 - Proper use of `DataClassification` on every field (never `ToBeClassified`).
-- `ApplicationArea` and `ToolTip` on every page field.
+- `Caption` and `ToolTip` defined on the table field and inherited by bound page fields; `ApplicationArea` explicit on every field and action a page extension adds. Follow the active UI rule where it is stricter.
 
 **BC Platform Patterns:**
 - Table extension vs. separate table: extending standard tables only when the field truly belongs on that entity.
 - Event usage: raising integration events before/after key operations.
 - `IsHandled` only as a documented last resort: prefer interfaces, positive events or `OnSkip` events with granular flags; a subscriber to a base-app `IsHandled` event replaces the smallest block and never a validation or a whole posting routine.
-- Single-instance codeunits only for event subscribers (not for state management).
+- `SingleInstance` codeunits used deliberately: the state they hold and its lifetime are stated, and they follow the active architecture rule.
 - Proper use of temporary tables for buffer patterns.
 - Correct record lifecycle (Init, Validate, Insert vs. raw field assignment).
 
 **Code Organization:**
 - Single responsibility: one codeunit = one concern.
 - Local vs. global procedures: minimize the public surface area.
-- Procedure length <30 lines; extract if longer.
+- Each procedure does one thing; split it when describing it needs "and" (no fixed line limit).
 - No business logic in page triggers (delegate to codeunits).
 - No deep nesting (>3 levels of if/loop).
 
 **Common AL Issues:**
-- Missing `SetLoadFields` (most common performance/correctness issue).
+- Missing `SetLoadFields` on a read path (most common performance issue).
 - Poor error messages: `Error('Something went wrong')` — useless to the user.
 - Empty triggers left in generated code.
 - Wrong integration pattern (direct table modification instead of using BC posting routines).
@@ -190,7 +189,7 @@ Read, Grep, Glob
 - FlowField calculations inside loops (each triggers a separate query).
 
 **Missing SetLoadFields:**
-- Every `Get`/`Find` without `SetLoadFields` loads all fields from the table — wasteful for wide tables like `Customer`, `Item`, `Sales Line`.
+- A read-path `Get`/`Find` without `SetLoadFields` loads all fields from the table — wasteful for wide tables like `Customer`, `Item`, `Sales Line`. Records that are then inserted, deleted, renamed or transferred need every field: no `SetLoadFields` there.
 - Especially critical inside loops.
 
 **Inefficient Filtering:**
@@ -203,9 +202,8 @@ Read, Grep, Glob
 - Solutions: use temporary tables as lookup, pre-load into dictionary, use queries.
 
 **Missing Bulk Operations:**
-- Record-by-record `Insert(true)` in a loop where `Insert(false)` with a final validation would suffice.
 - Record-by-record `Modify` where `ModifyAll` is appropriate.
-- Missing `Commit` boundaries in long-running processes (causes lock escalation).
+- `Commit` placement in long-running processes follows the active data-access rule: flag a `Commit` per row and a checkpoint the rule requires but the code lacks.
 
 **Algorithm Efficiency:**
 - O(n^2) where O(n) is possible (e.g., lookup in unsorted list vs. sorted list or dictionary).
@@ -213,14 +211,12 @@ Read, Grep, Glob
 - String concatenation in loops (use TextBuilder).
 
 **Missing Caching:**
-- Repeated `Get` calls for the same setup record inside a loop.
-- Repeated `CalcFields` for the same FlowField value.
-- Setup records that should be cached with `GetRecordOnce` pattern.
+- Repeated `CalcFields` for the same FlowField value inside a loop: calculate once. Whether a repeated `Get` is a finding follows the active data-access rules.
 
 **Common Performance Anti-Patterns:**
 - `FindFirst` in a loop (use `FindSet`).
 - `CalcFields` inside `FindSet` loop on a large table.
-- `SetLoadFields` missing on `Customer.Get`, `Item.Get`, etc.
+- `SetLoadFields` missing on a read-path `Customer.Get`, `Item.Get`, etc.
 - Loading entire temporary table for a single lookup (use `Get` on temp table).
 - `Format()` calls inside tight loops for logging.
 

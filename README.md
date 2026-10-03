@@ -18,8 +18,8 @@ claude-configs/
 │   ├── .claude-plugin/
 │   │   └── plugin.json        # Plugin metadata
 │   ├── CLAUDE.md              # AL coding standards and orchestration
-│   ├── skills/                # 12 model-invoked skills (develop, plan, fix, test, ...)
-│   ├── rules/                 # 5 auto-loaded AL guardrails
+│   ├── skills/                # 12 skills (develop, plan, fix, test, ...); 7 run only when the user invokes them
+│   ├── rules/                 # 5 AL guardrails, read on demand (Claude Code does not auto-load a plugin's rules/)
 │   └── agents/                # 1 agent (al-repo-summarizer)
 ├── .gitignore
 └── README.md (this file)

@@ -41,12 +41,12 @@ Before presenting code to the user, verify along both orthogonal review axes:
 - [ ] **Matches the plan** -- implementation follows the agreed solution design; deviations are explained and justified
 
 ### Axis 2: Technical Standards (Engineering Quality)
-- [ ] **AL coding standards met** -- PascalCase, namespaces, affix rules, SetLoadFields, FieldCaption errors, DataClassification, ApplicationArea (see `rules/` directory or project `pwe-coding-guidelines.md` plus the `pwe-coding-*` topic files its index names)
+- [ ] **AL coding standards met** -- the active rules: the project overlay's (e.g. `pwe-coding-guidelines.md` plus the `pwe-coding-*` topic files its index names), otherwise this plugin's `rules/` directory. The overlay prevails in any conflict
 - [ ] **Consistent naming** -- identifiers follow the same conventions throughout; no mix of styles
 - [ ] **Compiles cleanly** -- no obvious syntax errors, missing semicolons, undeclared variables, or type mismatches
 - [ ] **Minimal changes** -- only the code necessary to fulfill the requirement; no unrelated refactoring
 - [ ] **No empty triggers** -- all trigger bodies contain code or are removed
-- [ ] **XML documentation** -- public procedures have `/// <summary>` comments
+- [ ] **XML documentation** -- public procedures documented as the active rules require
 - [ ] **Events raised** -- meaningful extension points have IntegrationEvents
 - [ ] **Error messages use FieldCaption** -- no hardcoded field names in error strings
 
@@ -73,8 +73,9 @@ Before presenting tests to the user, verify:
 ```
 Agent produces code → Reviewer glances at it → "Looks good" → Present to user
 
-Result: User finds a missing SetLoadFields, a prefix affix on a table extension
-field, and a hardcoded field name in an error message. Trust erodes.
+Result: User finds a missing SetLoadFields, an extension field named against
+the project's naming rule, and a hardcoded field name in an error message.
+Trust erodes.
 ```
 
 ### Right: Challenging
@@ -82,13 +83,14 @@ field, and a hardcoded field name in an error message. Trust erodes.
 ```
 Agent produces code → Reviewer checks against checklist → Finds:
   1. Line 42: SetLoadFields missing before FindSet
-  2. Line 67: Field "ABC Status" uses prefix affix, should be "Status ABC"
+  2. Line 67: Field "Status" on a table extension lacks the affix the active
+     naming rule requires
   3. Line 89: Error('Status must be Open') should use FieldCaption
 
 → Sends specific feedback back to the coding step:
   "Fix these 3 issues: (1) Add SetLoadFields before the FindSet on line 42,
-   loading No. and Status. (2) Rename 'ABC Status' to 'Status ABC' -- suffix
-   only. (3) Replace hardcoded 'Status' with FieldCaption(Status) in the
+   loading No. and Status. (2) Rename 'Status' as the active naming rule
+   requires. (3) Replace hardcoded 'Status' with FieldCaption(Status) in the
    error on line 89."
 
 → Agent fixes → Reviewer re-checks → Clean → Present to user

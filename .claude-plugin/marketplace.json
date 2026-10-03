@@ -7,7 +7,7 @@
     {
       "name": "profile-al-development",
       "source": "./profile-al-development",
-      "description": "AL (Application Language) development configuration for Business Central. Includes AL-specific coding standards, patterns, commands, and tooling."
+      "description": "AL (Application Language) development configuration for Business Central. Includes AL-specific coding standards, patterns, skills, and tooling."
     }
   ]
 }

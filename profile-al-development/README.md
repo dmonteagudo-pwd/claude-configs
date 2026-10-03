@@ -1,6 +1,6 @@
 # AL Development Profile - Full Lifecycle
 
-**Version:** 5.2.5
+**Version:** see `.claude-plugin/plugin.json` (the pre-commit hook bumps it).
 
 Claude Code profile for Microsoft Dynamics 365 Business Central AL development with intelligent complexity routing and proportional planning.
 
@@ -11,12 +11,12 @@ This profile provides a document-driven development workflow with specialized ag
 ## Key Features
 
 - **Document-Driven Workflow** - All agents collaborate via `.dev/` markdown files
-- **Project Memory System** - 40-60% faster workflows via `.dev/project-context.md`
+- **Project Memory System** - agents read `.dev/project-context.md` instead of re-exploring the codebase
 - **Smart Complexity Routing** - Automatically matches workflow to task complexity
 - **Proportional Planning** - Simple tasks get concise plans, complex tasks get comprehensive docs
 - **Full Lifecycle Coverage** - Requirements → Design → Implementation → Testing
 - **MCP Integration** - BC Intelligence, Microsoft Docs, AL Dependency navigation
-- **Automated Workflows** - Complete development cycles with single commands
+- **Skill Workflows** - One skill per phase (plan, develop, test, document), run in sequence
 - **Clean Context** - Agents write detailed files, return concise summaries
 
 ## Quick Start
@@ -41,191 +41,65 @@ In your AL project's `.claude/settings.json`:
 }
 ```
 
-### Run Full Development Cycle
+### Typical Sequence
+
+There is no single end-to-end command. Run the skills in order, reviewing each output before the next:
 
 ```
-/dev-cycle "Add customer credit limit validation"
+/init-context                      # once per project: writes .dev/project-context.md
+/interview                         # optional: unclear requirements
+/plan "Add customer credit limit validation"
+/develop
+/test
+/document                          # optional
 ```
 
-This runs the complete pipeline:
-1. Requirements engineering
-2. BC solution design
-3. Implementation planning
-4. Code implementation
-5. Code review
-6. Diagnostics fixing
-7. Test creation
-8. Test review
+Each skill writes its artifacts under `.dev/<task-slug>/`.
 
-All results in `.dev/` directory.
+## Available Skills
 
-## Available Commands
+### User-invoked only
 
-### Estimation & Planning
+- `/init-context` - Create `.dev/project-context.md`, read by the plan and develop workflows
+- `/interview` - Deep requirements gathering (`00-interview.md`, `01-requirements.md`)
+- `/plan "[description]"` - Competitive solution design by 2-3 architect agents (`01-requirements.md`, `02-solution-plan.md`)
+- `/develop` - Parallel implementation plus a 4-specialist review (`03-code-review.md`, `04-deferred-issues.md`)
+- `/test` - Test suite by parallel test engineers (`05-test-plan.md`)
+- `/publish` - Deploy the compiled app with `bc-publish` (needs `.bcconfig.json`)
+- `/run-tests` - Run tests with `al-runner` (pure logic) or `bc-test` (against a BC instance)
 
-- `/estimate "[description]"` - Complete estimation workflow (interview → experts → planning → hours)
-- `/estimate --quick "[description]"` - Quick estimate (skip interview)
-- `/interview` - Deep requirements gathering (40+ questions)
-- `/plan "[description]"` - Planning phase only (requirements → design → plan)
+### Also model-invoked
 
-### Quick Fix (⚡ Fastest)
+- `/fix "[error or bug]"` - Lightweight bug fix with 3-tier classification
+- `/document` - Technical documentation from the `.dev/<task-slug>/` artifacts
+- `/verify-tests` - Adversarial test verification (`06-test-verification.md`, `06-mutations.json`)
 
-- `/fix "[error or bug]"` - Quick bug fix workflow (5 min: locate → fix → verify, no planning)
+### Background reference (not user-invocable)
 
-### Full Workflows
+- `build-tools` - Names the build, publish and test tools; the build route comes from the project or overlay
+- `review-checklists` - Checklists for plans, code and tests
 
-- `/dev-cycle "[description]"` - Complete development cycle
-- `/develop` - Development phase only (implement → review → fix)
-- `/test` - Testing phase only (create tests → review)
+### Agent
 
-### On-Demand Support
+- `al-repo-summarizer` - Repository overview for onboarding
 
-- `/bc-expert "[question]"` - Consult BC specialists
-- `/docs-lookup "[topic]"` - Search Microsoft Docs
-- `/nav-baseapp "[query]"` - Explore base app objects
+## TDD Mode
 
-## Development Phases
+`/develop` switches to strict RED-GREEN-REFACTOR when `.dev/<task-slug>/05-test-specification.md` exists. No skill writes that file: create it yourself to opt in. Protocol: `skills/test/tdd-workflow.md`; log: `03-tdd-log.md`. Each phase compiles, publishes and runs the test through the project routes, and stops for your approval.
 
-### Phase 1: Planning & Design
+## Build, Publish and Test Tools
 
-**Agents:**
-1. **requirements-engineer** - Extract and document requirements
-2. **solution-planner** - Design BC-integrated solution + create implementation plan
+The plugin ships no executables. `al-runner`, `al-mutate`, `bc-publish` and `bc-test` are optional external CLIs; check with `command -v`. The compile route comes from the project or overlay plugin. See `skills/build-tools/SKILL.md`.
 
-**Output:**
-- `.dev/01-requirements.md`
-- `.dev/02-solution-plan.md`
+`bc-publish` and `bc-test` read `.bcconfig.json` from the project root (`bc-publish --init` creates it). Keep credentials out of that file where possible and never commit it.
 
-### Phase 2: Development & Quality
+## MCP Servers
 
-**Agents:**
-3. **al-developer** - Write AL code
-4. **code-reviewer** - Review code quality
-5. **diagnostics-fixer** - Fix compiler diagnostics
+The plugin ships no MCP configuration. Skills use these servers when the project or an overlay plugin provides them:
 
-**Output:**
-- `.dev/03-code-review.md`
-- `.dev/04-diagnostics.md`
-- AL source files
-
-### Phase 3: Testing & Validation
-
-**Agents:**
-6. **test-engineer** - Create comprehensive tests
-7. **test-reviewer** - Review test coverage
-
-**Output:**
-- `.dev/05-test-plan.md`
-- `.dev/06-test-review.md`
-- Test codeunits
-
-### Support Agents (On-Demand)
-
-**Agents:**
-8. **bc-expert** - BC specialist consultation
-9. **docs-lookup** - Microsoft Docs search
-10. **dependency-navigator** - Base app exploration
-
-**Output:**
-- `.dev/expert-[topic].md`
-- `.dev/docs-[topic].md`
-- `.dev/nav-[topic].md`
-
-**Note:** solution-planner uses BC Intelligence, MS Docs, and AL Dependency MCP tools internally.
-
-## Automated Test Execution (v2.20+)
-
-Agents can now automatically compile, publish, and execute tests during TDD workflow:
-
-### Requirements
-
-1. **bc-publish** - Publishes .app files to BC server
-2. **bc-test** - Executes test codeunits via OData API
-3. **.bcconfig.json** - BC server configuration
-
-### Setup
-
-Install bc-publish and bc-test utilities (or ensure they're in PATH):
-
-```bash
-# Create .bcconfig.json in your project root
-bc-publish --init
-```
-
-Edit `.bcconfig.json`:
-
-```json
-{
-  "server": "http://localhost",
-  "port": 7048,
-  "instance": "BC",
-  "tenant": "default",
-  "username": "admin",
-  "password": "Admin123!",
-  "apiInstance": "BC",
-  "apiPassword": "your-web-service-access-key",
-  "schemaUpdateMode": "synchronize"
-}
-```
-
-### TDD Workflow with Automated Testing
-
-When using TDD workflow (`/develop` with test specifications):
-
-1. **RED Phase**: Agent writes failing test, compiles, publishes, runs → verifies FAIL → asks user to approve
-2. **GREEN Phase**: Agent implements code, compiles, publishes, runs → verifies PASS → asks user to approve
-3. **REFACTOR Phase**: Agent refactors, compiles, publishes, runs all tests → verifies all PASS → asks user to approve
-
-This automation maintains TDD discipline while eliminating manual deployment steps.
-
-### Advanced bc-test Features
-
-**Auto-Detection:**
-- bc-test automatically detects test codeunit range from app.json
-- No need to specify codeunit IDs manually
-
-**File Output:**
-- `-o file.txt`: Write detailed results to file (human-readable)
-- `-o file.json -f json`: Export as JSON for CI/CD integration
-- Console shows summary only for clean conversation
-
-**Failures-Only Filter:**
-- `--failures-only`: Focus on failed tests only
-- Smart default: Console output shows failures-only by default
-
-**Examples:**
-```bash
-# Auto-detect range, show failures only (default)
-bc-test
-
-# Save all results to file
-bc-test -o .dev/test-results.txt
-
-# Export as JSON for CI/CD
-bc-test -o results.json -f json
-
-# Focus on failures
-bc-test --failures-only
-```
-
-## MCP Server Configuration
-
-This profile uses three MCP servers:
-
-### BC Code Intelligence MCP
-- BC specialist consultations
-- Best practices and patterns
-- Architecture guidance
-
-### Microsoft Docs MCP
-- Official AL documentation
-- API references
-- Breaking changes information
-
-### AL Dependency MCP
-- Base app object navigation
-- Event discovery
-- Dependency analysis
+- **BC Code Intelligence** - specialist guidance and best practices
+- **Microsoft Docs** - official AL documentation
+- **AL symbols** - base app object navigation and event discovery
 
 ## Directory Structure
 
@@ -233,27 +107,12 @@ This profile uses three MCP servers:
 profile-al-development/
 ├── .claude-plugin/
 │   └── plugin.json           # Plugin metadata
-├── agents/                   # Specialized agents (10 total)
-│   ├── requirements-engineer.md
-│   ├── solution-planner.md
-│   ├── al-developer.md
-│   ├── code-reviewer.md
-│   ├── diagnostics-fixer.md
-│   ├── test-engineer.md
-│   ├── test-reviewer.md
-│   ├── bc-expert.md
-│   ├── docs-lookup.md
-│   └── dependency-navigator.md
-├── commands/                 # Slash commands
-│   ├── dev-cycle.md
-│   ├── plan.md
-│   ├── develop.md
-│   ├── test.md
-│   ├── bc-expert.md
-│   ├── docs-lookup.md
-│   └── nav-baseapp.md
-├── CLAUDE.md                 # Main profile instructions
-├── .mcp.json                 # MCP server configuration
+├── agents/
+│   └── al-repo-summarizer.md # model: sonnet
+├── hooks/README.md           # no hooks shipped
+├── rules/                    # 5 AL guardrails, read on demand (not auto-loaded)
+├── skills/                   # 12 skills (/plan, /develop, /fix, /test, /document, ...)
+├── CLAUDE.md                 # documentation; Claude Code does not load a plugin's CLAUDE.md
 └── README.md                 # This file
 ```
 
@@ -273,70 +132,17 @@ profile-al-development/
 # - Done! Ready to commit
 ```
 
-### Starting a New Feature
-
-```bash
-# 1. Run full development cycle
-/dev-cycle "Add field validation for customer emails"
-
-# 2. Review output files
-cat .dev/01-requirements.md
-cat .dev/02-solution-plan.md
-
-# 3. Implementation, review, diagnostics run automatically
-
-# 4. Review code and test results
-cat .dev/03-code-review.md
-cat .dev/06-test-review.md
-
-# 5. Done! Code, tests, and documentation all in place
-```
-
 ### Planning Only
 
 ```bash
-# Create solution plan without coding
 /plan "Add dashboard for sales analytics"
-
-# Review plan
-cat .dev/02-solution-plan.md
-
-# Later, implement the plan
+# Review .dev/<task-slug>/02-solution-plan.md, then:
 /develop
-```
-
-### Getting BC Expert Help
-
-```bash
-# Consult BC specialist
-/bc-expert "Best practice for extending posting routines?"
-
-# Review consultation
-cat .dev/expert-posting-routines.md
-```
-
-### Exploring Base App
-
-```bash
-# Find extension points
-/nav-baseapp "Find all Customer table events"
-
-# Review findings
-cat .dev/nav-customer-events.md
 ```
 
 ## AL Coding Standards
 
-This profile enforces BC best practices:
-
-- **PascalCase** naming
-- **Table extensions** over base modifications
-- **Event subscribers** for base app integration
-- **SetLoadFields** for performance
-- **XML documentation** on public procedures
-- **DataClassification** on all fields
-
-See `CLAUDE.md` for complete standards.
+The guardrails live in `rules/al-*.md`. They are not auto-loaded: a project or overlay plugin decides when they are read, and its rules prevail in any conflict. This plugin sets no naming or affix convention of its own; AppSourceCop is the authority on affixes.
 
 ## Output Files
 
@@ -344,33 +150,21 @@ All agent work documented in `.dev/`:
 
 ```
 .dev/
-├── 01-requirements.md      # What to build
-├── 02-solution-plan.md     # Complete solution (design + implementation)
-├── 03-code-review.md       # Code quality review
-├── 04-diagnostics.md       # Compiler fixes
-├── 05-test-plan.md         # Test strategy
-├── 06-test-review.md       # Test coverage review
-├── session-log.md          # Agent activity log
-├── expert-*.md             # BC specialist consultations
-├── docs-*.md               # Microsoft Docs lookups
-└── nav-*.md                # Base app explorations
+├── project-context.md          # /init-context
+└── <task-slug>/
+    ├── 00-interview.md         # /interview
+    ├── 01-requirements.md      # /interview or /plan
+    ├── 02-solution-plan.md     # /plan
+    ├── 03-code-review.md       # /develop
+    ├── 03-tdd-log.md           # /develop in TDD mode
+    ├── 04-deferred-issues.md   # /develop
+    ├── 05-test-specification.md# written by you to enable TDD mode
+    ├── 05-test-plan.md         # /test
+    ├── 06-test-verification.md # /verify-tests
+    └── 06-mutations.json       # /verify-tests
 ```
 
-## Agent Collaboration
-
-Agents read previous outputs to maintain context:
-
-```
-requirements-engineer → 01-requirements.md
-                              ↓
-solution-planner → 02-solution-plan.md (reads 01, uses MCP tools)
-                              ↓
-al-developer → AL code (reads 02)
-                              ↓
-code-reviewer → 03-code-review.md (reads code)
-                              ↓
-[and so on...]
-```
+Each skill reads the earlier artifacts: `/develop` reads `02-solution-plan.md`, `/test` and `/verify-tests` read the plan and the code.
 
 ## Benefits
 
@@ -390,31 +184,13 @@ code-reviewer → 03-code-review.md (reads code)
 - Consistent quality
 
 ### MCP Integration
-- Official Microsoft documentation
-- BC specialist expertise
-- Base app understanding
+- Official Microsoft documentation, BC specialist guidance and symbol navigation, when the project provides the servers
 
 ## Customization
 
 ### Project-Specific Settings
 
-In your project's `.claude/CLAUDE.md`:
-
-```markdown
-# Project-Specific AL Guidelines
-
-## Object Number Range
-- Tables: 50100-50199
-- Codeunits: 50100-50199
-- Pages: 50100-50199
-
-## Custom Prefix
-- All objects: `ACME`
-
-@~/claude-configs/profile-al-development/CLAUDE.md
-```
-
-The `@` import loads the profile, your settings augment it.
+Put project conventions (object ranges, affix, naming) in the project's `CLAUDE.md` or in an overlay plugin's `rules/`. They prevail over `rules/al-*.md`. Because Claude Code loads neither a plugin's `CLAUDE.md` nor its `rules/` directory on its own, reference the rules you want applied from the project's `CLAUDE.md`.
 
 ## Troubleshooting
 
@@ -427,10 +203,9 @@ cat ~/.claude/settings.json
 cat ~/claude-configs/profile-al-development/.claude-plugin/plugin.json
 ```
 
-### Agents Not Working
-- Ensure MCP servers are configured
-- Check `.mcp.json` paths
-- Verify BC Intelligence MCP is running
+### Skills Missing MCP Tools
+- The plugin ships no MCP configuration: configure the servers in the project or an overlay plugin
+- Run `/mcp` to check that they are connected
 
 ### Clean Slate
 ```bash
@@ -477,10 +252,10 @@ Desktop notifications for when Claude needs your attention or finishes work. Add
 - Claude Code CLI
 - AL Language extension
 - BC development environment
-- MCP servers (optional but recommended):
+- MCP servers (optional, configured by the project or an overlay):
   - BC Code Intelligence MCP
   - Microsoft Docs MCP
-  - AL Dependency MCP
+  - AL symbols MCP
 
 ## Contributing
 

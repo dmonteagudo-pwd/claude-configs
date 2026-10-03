@@ -15,7 +15,7 @@ Read, Write, Edit, Glob, Grep, Bash, LSP
 
 ## Optional Inputs
 
-- `.dev/<task-slug>/05-test-specification.md` — Test specs. If this exists, follow the TDD workflow below.
+- `.dev/<task-slug>/05-test-specification.md` — Test specs. No skill generates this file: the user writes it to opt into TDD. If it exists, follow the TDD workflow below (full protocol: `skills/test/tdd-workflow.md`).
 - `.dev/<task-slug>/03-code-review.md` — Review findings. If this exists, you are iterating on reviewer feedback. Fix the issues listed.
 
 ---
@@ -36,19 +36,19 @@ Before writing any code:
 - Note the planned object IDs, names, and relationships.
 - Identify the implementation sequence (create dependencies before dependents).
 
-### 3. Implement Code Using Templates
+### 3. Implement Code
 
 For each file in your assignment:
-1. Create the file following the AL templates below.
+1. Create the file following the active coding standards (see "AL Coding Standards" below).
 2. Follow the naming conventions from project context.
-3. Use proper namespaces and affixes.
+3. Use the namespaces and affixes the active naming rule requires.
 4. Compile after creating the file.
 5. Fix any compilation errors immediately.
 6. Do NOT proceed to the next file until the current file compiles cleanly.
 
 ### 4. Verify Compilation After Each File
 
-Run `al-compile` (or the project's compilation command) after every file. If compilation fails:
+Compile through the project's build route (the command the manager gave you in the briefing) after every file. If compilation fails:
 - Read the error message carefully.
 - Fix the issue in the file.
 - Recompile.
@@ -112,170 +112,15 @@ Document each cycle in `.dev/<task-slug>/03-tdd-log.md`:
 
 ---
 
-## AL Code Quality Standards
+## AL Coding Standards
 
-### Naming Conventions
-- **PascalCase** for all identifiers (procedures, variables, fields, objects).
-- **Namespaces** must match project convention from project context.
-- **Affixes** must match the registered affix from project context.
-- **Object names** must be descriptive and follow the pattern: `<Affix> <Entity> <Type>` (e.g., `CXT Item Import Mgt.`).
+Coding standards come from the rules active for this project, not from this brief. Read them before writing the first line:
 
-### SetLoadFields Before Get/Find
-```al
-Customer.SetLoadFields(Name, "E-Mail");
-if Customer.Get(CustomerNo) then
-    // use Customer.Name, Customer."E-Mail"
-```
-ALWAYS call `SetLoadFields` before `Get`, `FindFirst`, `FindLast`, `FindSet`. List only the fields you actually read.
+- **Project overlay rules**, when the manager names them in the briefing (e.g. `profile-bc-prodware/rules/pwe-*.md`). They prevail over this plugin's rules in any conflict.
+- Otherwise, this plugin's `rules/al-*.md` (naming, conventions, data access, architecture, engineering).
+- **Existing code** in the target extension shows how those rules are applied. Match it.
 
-### Proper Error Messages
-```al
-// WRONG:
-Error('Customer not found');
-
-// RIGHT:
-Error(CustomerNotFoundErr, Customer.FieldCaption("No."), CustomerNo);
-// where CustomerNotFoundErr is a label:
-// CustomerNotFoundErr: Label '%1 %2 not found.', Comment = '%1 = field caption, %2 = field value';
-```
-Always use `FieldCaption` for field references in error messages. Always use Label variables for error text.
-
-### Dependency Injection via Interfaces
-```al
-interface "CXT IData Provider"
-{
-    procedure GetData(var TempBuffer: Record "CXT Data Buffer" temporary);
-}
-```
-Use interfaces for external dependencies to enable testability and mocking.
-
-### Events for Extensibility
-```al
-[IntegrationEvent(false, false)]
-local procedure OnBeforePostDocument(var Document: Record "CXT Document")
-begin
-end;
-
-[IntegrationEvent(false, false)]
-local procedure OnAfterPostDocument(var Document: Record "CXT Document")
-begin
-end;
-```
-Raise positive integration events before/after key operations: subscribers add behaviour, nothing in the base flow is skipped. For replaceable behaviour, prefer an interface or an `OnSkip` event with a granular flag. Use the `IsHandled` pattern only as a documented last resort, when no better extension point exists.
-
-### DRY / SOLID Principles
-- Before writing logic, **check if it already exists** in the codebase (use Grep/Glob).
-- Centralize shared logic in management codeunits.
-- Each procedure should do ONE thing.
-- Procedures should be <30 lines. If longer, extract sub-procedures.
-- Single responsibility: one codeunit = one concern.
-
----
-
-## Standard AL Templates
-
-### Table Extension
-```al
-tableextension 50100 "CXT Customer Ext." extends Customer
-{
-    fields
-    {
-        field(50100; "CXT Custom Field"; Code[20])
-        {
-            Caption = 'Custom Field';
-            DataClassification = CustomerContent;
-
-            trigger OnValidate()
-            begin
-                if Rec."CXT Custom Field" = '' then
-                    Error(FieldMustNotBeEmptyErr, Rec.FieldCaption("CXT Custom Field"));
-            end;
-        }
-    }
-
-    var
-        FieldMustNotBeEmptyErr: Label '%1 must not be empty.', Comment = '%1 = field caption';
-}
-```
-
-### Codeunit
-```al
-codeunit 50100 "CXT Item Import Mgt."
-{
-    /// <summary>
-    /// Imports items from the specified source.
-    /// </summary>
-    /// <param name="SourceCode">The source system code to import from.</param>
-    /// <returns>The number of items imported.</returns>
-    procedure ImportItems(SourceCode: Code[20]): Integer
-    var
-        ItemCount: Integer;
-    begin
-        ValidateSourceCode(SourceCode);
-        ItemCount := ProcessImport(SourceCode);
-        OnAfterImportItems(SourceCode, ItemCount);
-        exit(ItemCount);
-    end;
-
-    local procedure ValidateSourceCode(SourceCode: Code[20])
-    begin
-        if SourceCode = '' then
-            Error(SourceCodeRequiredErr);
-    end;
-
-    local procedure ProcessImport(SourceCode: Code[20]): Integer
-    begin
-        // Implementation
-    end;
-
-    [IntegrationEvent(false, false)]
-    local procedure OnAfterImportItems(SourceCode: Code[20]; ItemCount: Integer)
-    begin
-    end;
-
-    var
-        SourceCodeRequiredErr: Label 'Source code is required for item import.';
-}
-```
-
-### Event Subscriber
-```al
-codeunit 50101 "CXT Sales Event Sub."
-{
-    SingleInstance = true;
-
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", OnAfterPostSalesDoc, '', false, false)]
-    local procedure OnAfterPostSalesDoc(var SalesHeader: Record "Sales Header"; SalesInvHdrNo: Code[20])
-    begin
-        if SalesInvHdrNo = '' then
-            exit;
-        // Custom logic here: the document is posted, nothing in the base flow is skipped
-    end;
-}
-```
-
-### Page Extension
-```al
-pageextension 50100 "CXT Customer Card Ext." extends "Customer Card"
-{
-    layout
-    {
-        addafter(General)
-        {
-            group("CXT Custom Group")
-            {
-                Caption = 'Custom Group';
-
-                field("CXT Custom Field"; Rec."CXT Custom Field")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the custom field value for this customer.';
-                }
-            }
-        }
-    }
-}
-```
+Before writing logic, check whether it already exists in the codebase (Grep/Glob). If the briefing names no rules and you cannot find any, say so in your report instead of inventing a convention.
 
 ---
 
@@ -286,22 +131,6 @@ pageextension 50100 "CXT Customer Card Ext." extends "Customer Card"
 3. **Do not proceed until clean.** A broken file means the next file will also likely break.
 4. **If stuck on a compilation error for more than 2 attempts,** report the issue — do not keep guessing.
 
-## Error Handling
-
-- Always use `Error()` with clear, translatable messages.
-- Use Label variables for all user-facing text.
-- Validate user input in `OnValidate` triggers.
-- Check preconditions at the start of procedures.
-- Use `TestField` for mandatory field validation.
-- Use `FieldCaption` in all error messages referencing fields.
-
-## Performance
-
-- `SetLoadFields` before every `Get`/`Find` operation.
-- `FindSet` for iteration (not `FindFirst` in a loop).
-- Filter before loading — never load all records and filter in AL code.
-- Use `SetAutoCalcFields` for FlowFields you need in loops.
-- Bulk operations where possible (no record-by-record insert in a loop without `Insert(false)`).
 
 ---
 

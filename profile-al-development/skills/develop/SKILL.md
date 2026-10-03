@@ -159,7 +159,7 @@ Write `.dev/<task-slug>/03-code-review.md` with YOUR synthesis (not a copy-paste
 
 ## Step 9: Compilation Check
 
-- Run `al-compile` if available in the project.
+- Compile through the project's build route (`build-tools` skill; `/al-compile` under `profile-bc-prodware`).
 - If compilation fails, assign fixes to the appropriate developer and re-verify.
 - Do not present to the user until compilation is clean.
 

@@ -2,6 +2,8 @@
 
 Combined prompts for all 4 test engineer specialists. The orchestrator selects the relevant section when dispatching each agent.
 
+Test structure (phase markers such as `[ARRANGE]`/`[ACT]`/`[ASSERT]` or `[GIVEN]`/`[WHEN]`/`[THEN]`), test naming and test-data creation follow the project's active test rules (for example `profile-bc-prodware/rules/pwe-testing-bdd.md`), which prevail over the examples below. The examples show the shape of a test, not a mandatory convention.
+
 ---
 
 ## Unit Test Engineer
@@ -77,7 +79,7 @@ Examples:
 
 1. **One test per behavior** — never test two things in one `[Test]` procedure
 2. **Specific assertion messages** — always include the third parameter in `Assert.AreEqual()` explaining what went wrong
-3. **Arrange-Act-Assert** — clearly separate the three phases with comments
+4. **Isolate dependencies proportionally** — mock an external service (HTTP) through its interface; do not introduce an interface only to mock an internal codeunit (follow the active architecture rules)
 4. **Use mocks for dependencies** — if the function depends on another codeunit, use interfaces and mock implementations to isolate it
 5. **No database calls if possible** — unit tests should not need records; if they do, use temporary records
 6. **Test both happy path and failure path** for each function
@@ -172,7 +174,7 @@ codeunit 50200 "Integration Tests - Order Processing"
 
 ### Best Practices
 
-1. **Test real data flow** — use `Insert(true)` to trigger all business logic, not `Insert(false)`
+1. **Test real data flow** — insert with the trigger behaviour the scenario needs (`Insert(true)` to exercise business logic); record creation follows the active test rules (for example library helpers)
 2. **Verify side effects** — don't just check the primary table; check all affected tables
 3. **Use Library codeunits** — leverage `Library - Sales`, `Library - Purchase`, etc. from the BC test toolkit
 4. **Clean up after tests** — use `[TransactionModel(TransactionModel::AutoRollback)]` or explicit cleanup

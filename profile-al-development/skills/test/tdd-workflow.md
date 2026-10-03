@@ -1,6 +1,6 @@
 # TDD RED-GREEN-REFACTOR Protocol
 
-Shared reference for the `/test` and `/develop` skills. This defines the strict TDD workflow that must be followed when TDD mode is active.
+Shared reference for the `/develop` skill. It defines the strict TDD workflow that applies when TDD mode is active: `.dev/<task-slug>/05-test-specification.md` exists. No skill generates that file; the user writes it to opt in.
 
 ## Core TDD Principles
 
@@ -19,21 +19,21 @@ The goal is to write a test that fails for the RIGHT reason (missing logic, not 
 ### Steps
 
 1. **Write the test codeunit** following the spec and assigned test scenarios
-2. **Implement mock repositories** for dependency injection (interfaces with stub implementations)
+2. **Stub external services only** — an external (HTTP) dependency gets a stub behind its interface; do not add interfaces or mock repositories for internal codeunits
 3. **Create MINIMAL production code stubs** — enough to compile, but NO actual logic
    - Procedures return default values (0, '', false)
    - No business rules, no calculations, no validations
 4. **Compile:**
    ```bash
-   al-compile
+   <project build route>
    ```
 5. **Publish:**
    ```bash
-   bc-publish
+   <project publish route>   # e.g. /publish (bc-publish), when installed
    ```
 6. **Run the test:**
    ```bash
-   bc-test -o .dev/<task-slug>/test-results-red.txt
+   <project test route> -o .dev/<task-slug>/test-results-red.txt   # e.g. /run-tests (bc-test), when installed
    ```
 7. **HARD STOP** — Use AskUserQuestion:
 
@@ -66,7 +66,7 @@ The goal is to write the MINIMUM production code that makes the test pass. No mo
 2. **Implement real interface implementations** (replace mocks with production code where appropriate)
 3. **Compile, publish, and run the test:**
    ```bash
-   al-compile && bc-publish && bc-test -o .dev/<task-slug>/test-results-green.txt
+   <project build route> && <project publish route> && <project test route> -o .dev/<task-slug>/test-results-green.txt
    ```
 4. **HARD STOP** — Use AskUserQuestion:
 
@@ -106,7 +106,7 @@ The goal is to improve code quality WITHOUT changing behavior. All tests must co
 
 4. **Compile, publish, and run ALL tests** (not just the current one):
    ```bash
-   al-compile && bc-publish && bc-test -o .dev/<task-slug>/test-results-refactor.txt
+   <project build route> && <project publish route> && <project test route> -o .dev/<task-slug>/test-results-refactor.txt
    ```
 
 5. **HARD STOP** — Use AskUserQuestion:

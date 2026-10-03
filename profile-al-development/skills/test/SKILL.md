@@ -90,7 +90,7 @@ After agents complete, verify:
 
 - **No ID conflicts** — scan all created test codeunits for duplicate IDs
 - **All assigned scenarios covered** — diff assigned vs. implemented
-- **Consistent patterns** — all use `[Test]` attribute, Arrange-Act-Assert, proper naming
+- **Consistent patterns** — all use the `[Test]` attribute and the structure and naming of the active test rules
 - **No compilation issues** — check for obvious syntax problems
 
 If agents asked technical questions (how to mock, which fixtures, which BC objects to use), answer them and re-dispatch.

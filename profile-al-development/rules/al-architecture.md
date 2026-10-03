@@ -5,6 +5,8 @@ globs: ["**/*.al"]
 
 # AL Architecture Rules
 
+> Rules from a project overlay plugin (for example `profile-bc-prodware/rules/`) prevail over this file in any conflict.
+
 ## Layer Responsibilities
 
 **Pages and PageExtensions** — UI and UI control only.
@@ -26,24 +28,16 @@ globs: ["**/*.al"]
 
 ## Testability and Dependency Injection
 
-Code must be written so it can be tested without a full BC environment where possible.
+Code must be testable, at the depth the solution needs. Tests reach impure dependencies (database, date/time, external services, user input) through a seam: a point where behavior can be changed without modifying the code under test.
 
-**Injectable dependencies**: anything external to the procedure's own logic must be injectable:
-- Setup and configuration (company info, setup tables)
-- External services or integrations
-- Date/time sources if behavior depends on them
+**When to define an interface**:
+- An external service (HTTP or any other integration outside BC) always sits behind an interface, so tests can replace it.
+- Otherwise, define an interface only when the design has two or more real implementations of one contract (carrier integrations, payment providers, interchangeable strategies), or when it breaks a dependency the architecture rules forbid.
+- One implementation and no stated second one means no interface. Never define an interface, publish an event or add a setup field whose only consumer is a hypothetical future requirement.
 
-**Pattern**: procedures receive dependencies as interface parameters, or the codeunit receives them via a setter before execution. No inline `CompanyInfo.Get()` or setup table reads buried in business logic — pass the values in or inject the source.
-
-**Interfaces and dependency resolution**:
-- Define an interface for every external dependency that may vary or need mocking.
+**Resolving an interface**:
 - For simple cases, an overloaded procedure is sufficient: one overload takes the interface as a parameter, the other calls the first with the default implementation. No factory needed.
-- Use a factory codeunit when the dependency resolution is non-trivial, shared across callers, or needs to be swappable at a higher level (e.g. test setup registers a mock once for the whole test). Factories are a tool, not a requirement everywhere.
-- Test code substitutes the real implementation with a mock via the injection point — parameter overload or factory registration. This is the seam.
-- A seam is a point where behavior can be changed without modifying the code under test. Design for seams deliberately.
+- Use a factory codeunit when the resolution is non-trivial, shared across callers, or must be swappable at a higher level (e.g. test setup registers a mock once for the whole test). Factories are a tool, not a requirement everywhere.
+- Test code substitutes the real implementation through that injection point.
 
-## Clear Seams
-
-Every place where an implementation might change — integrations, pricing logic, approval flows, external lookups — must be behind an interface. This is not optional for testability; it is also what allows individual implementations to be swapped when requirements change without touching surrounding code.
-
-If you find yourself writing `if Environment = 'TEST' then` inside business logic, that is a missing seam. Replace it with an interface.
+If you find yourself writing `if Environment = 'TEST' then` inside business logic, that is a missing seam: add one at the dependency that forces it.

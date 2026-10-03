@@ -5,21 +5,25 @@ globs: ["**/*.al"]
 
 # AL Conventions
 
+> Rules from a project overlay plugin (for example `profile-bc-prodware/rules/`) prevail over this file in any conflict.
+
 ## DataClassification
 
 Every table field requires an active decision on `DataClassification` — do not leave it as `ToBeClassified` or omit it.
 
 If the table sets a default via `DataClassification` at object level, individual fields that match the default do not need to repeat it. Fields that differ from the default must explicitly override it.
 
-Use `CustomerContent`, `EndUserIdentifiableInformation`, `SystemMetadata`, `CompanyConfidential`, `AccountData`, `OrganizationIdentifiableInformation`, or `PublicPersonalData` as appropriate. When in doubt, `CustomerContent` is the safe default for business data.
+Use `CustomerContent`, `EndUserIdentifiableInformation`, `EndUserPseudonymousIdentifiers`, `AccountData`, `OrganizationIdentifiableInformation`, or `SystemMetadata` as appropriate. When in doubt, `CustomerContent` is the safe default for business data.
 
 ## ApplicationArea
 
 Set a page-level default where all fields share the same area (almost always `ApplicationArea = All` on the page). Fields that match the page default do not need to repeat it. Only set `ApplicationArea` on individual fields or actions when they differ from the page default.
 
+The page-level default does not reach page extensions or report extensions: set `ApplicationArea` explicitly on every field and action they add (AppSourceCop AS0062).
+
 ## Caption
 
-`Caption` must be set on every field, action, and page — they are user-facing.
+`Caption` must be set on every table field, action, and page — they are user-facing. A page field bound to a table field inherits the table field's `Caption` and `ToolTip`: define them on the table field and set them on the page field only to override.
 
 ## Triggers
 

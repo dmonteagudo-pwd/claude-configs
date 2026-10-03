@@ -50,11 +50,11 @@ Do not mix two of these in one session: they disagree about where the `.app` is 
 | Tool | Purpose | Skill | BC required? |
 |------|---------|-------|--------------|
 | `al-runner` | Run pure-logic unit tests in milliseconds | `/run-tests` | No |
-| `al-mutate` | Mutation testing to validate test quality | none — CLI only | No |
+| `al-mutate` | Mutation testing to validate test quality | `/verify-tests` (optional) | No |
 | `bc-publish` | Deploy `.app` to a BC server | `/publish` | Yes |
 | `bc-test` | Run full integration tests via the BC OData API | `/run-tests` | Yes |
 
-`/verify-tests` covers adversarial test verification and does not need `al-mutate`.
+`/verify-tests` uses `al-mutate` when it is installed and falls back to manual mutations when it is not.
 
 ## Config
 

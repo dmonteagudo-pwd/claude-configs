@@ -4,6 +4,8 @@ description: AL development engineering principles — always loaded
 
 # Engineering Principles
 
+> Rules from a project overlay plugin (for example `profile-bc-prodware/rules/`) prevail over this file in any conflict.
+
 ## Best Solution First
 
 Always design the best-engineered solution first. Never default to a shortcut, workaround, or "good enough" approach without first establishing what the correct solution is.
@@ -40,4 +42,4 @@ Zero tolerance for duplicate logic. Before writing any procedure, check whether 
 
 **Interface Segregation**: keep interfaces small and focused. Do not bundle unrelated operations into one interface.
 
-**Dependency Inversion**: codeunits depend on interfaces, not on concrete implementations. Concrete types are resolved at the factory or composition root, not inline.
+**Dependency Inversion (proportional)**: an external service (HTTP) always sits behind an interface. Otherwise introduce an interface only for two or more real implementations or to break a forbidden dependency — never for a hypothetical consumer (see `al-architecture.md`).

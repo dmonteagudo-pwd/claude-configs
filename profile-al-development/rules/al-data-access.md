@@ -5,11 +5,13 @@ globs: ["**/*.al"]
 
 # AL Data Access Rules
 
+> Rules from a project overlay plugin (for example `profile-bc-prodware/rules/`) prevail over this file in any conflict.
+
 ## Before Any Data Access
 
 Before every record retrieval operation (`Get`, `FindFirst`, `FindLast`, `FindSet`), decide both:
 
-1. **`SetLoadFields`** — load only the fields you will actually use. Reading a full record to access one field is a defect. Set it before every retrieval.
+1. **`SetLoadFields`** — on read paths, load only the fields you will actually use; reading a full record to access one field is a defect. Do not use it on a record that will be inserted, deleted, renamed, used in `TransferFields` or copied to a temporary record: those operations need every field, so the platform does a JIT load that costs more than the partial read saves.
 2. **`ReadIsolation`** — decide the isolation level before the read, and set it only when the default is wrong. For ordinary reads, leave the default: the runtime chooses the level per table, and tri-state locking (always on from v26) reads with `ReadCommitted` after writes. Raise it with `Rec.ReadIsolation := IsolationLevel::UpdLock` when the read decides a write (read-then-modify, next entry number, balance or stock check). Lower it with `IsolationLevel::ReadUncommitted` only where a dirty read is acceptable (estimated counts, cues, dashboards), never when the result drives a write, a validation or a posting.
 
 ## FlowFields

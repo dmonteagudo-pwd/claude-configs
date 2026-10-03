@@ -29,7 +29,7 @@ You receive:
 
 ## Tool Availability
 
-`al-mutate` (MSDyn365BC.AL.Mutate) is installed globally in the Docker image. No setup needed.
+`al-mutate` (MSDyn365BC.AL.Mutate) is an optional CLI and is not on `PATH` by default (`build-tools` skill). Check it with `command -v al-mutate` before use; if it is absent, use the manual mutations in Step 5.
 
 ```bash
 al-mutate --help       # verify it's available
@@ -56,7 +56,7 @@ See `al-runner --guide` for the full reference.
 
 ## Mutation Log Format
 
-`al-mutate` writes `mutations.json` automatically using `--log .dev/<task-slug>/mutations.json`. The log is append-only (schema_version 1) with entries for each mutation including `file`, `line`, `original`, `mutated`, and `status` (KILLED / SURVIVED / COMPILE_ERROR / OBSOLETE / TIMED_OUT).
+`al-mutate` writes `06-mutations.json` automatically using `--log .dev/<task-slug>/06-mutations.json`. The log is append-only (schema_version 1) with entries for each mutation including `file`, `line`, `original`, `mutated`, and `status` (KILLED / SURVIVED / COMPILE_ERROR / OBSOLETE / TIMED_OUT).
 
 Read this file after `al-mutate run` or `al-mutate replay` to extract results for the verdict report. Do not manually edit the log — `al-mutate` manages it.
 
@@ -123,11 +123,11 @@ Read each file completely. Build a mental model of:
 Delegate to `al-mutate replay`:
 
 ```bash
-al-mutate replay .dev/<task-slug>/mutations.json --tests ./test/src \
+al-mutate replay .dev/<task-slug>/06-mutations.json --tests ./test/src \
   2>&1 | tee .dev/<task-slug>/replay-output.txt
 ```
 
-Read the output and `mutations.json` to produce a **Replay Summary** before continuing:
+Read the output and `06-mutations.json` to produce a **Replay Summary** before continuing:
 
 ```
 REPLAY SUMMARY
@@ -164,21 +164,21 @@ Delegate to `al-mutate run`:
 
 ```bash
 al-mutate run ./src --tests ./test/src \
-  --log .dev/<task-slug>/mutations.json \
+  --log .dev/<task-slug>/06-mutations.json \
   2>&1 | tee .dev/<task-slug>/mutation-run-output.txt
 ```
 
 With stubs (if needed for unsupported dependencies):
 ```bash
 al-mutate run ./src --tests ./test/src --stubs ./test/stubs \
-  --log .dev/<task-slug>/mutations.json
+  --log .dev/<task-slug>/06-mutations.json
 ```
 
 `al-mutate` handles the full cycle automatically: apply mutation → compile → test via al-runner → restore via git. It skips mutations already in the log.
 
-Read `mutations.json` and `report.md` after the run to populate the mutation results for Step 8.
+Read `06-mutations.json` and `report.md` after the run to populate the mutation results for Step 8.
 
-**If al-mutate is unavailable** (e.g., running outside the Docker container), fall back to manual mutations:
+**If al-mutate is unavailable** (not installed), fall back to manual mutations:
 
 | Category | Mutation Examples |
 |----------|------------------|
