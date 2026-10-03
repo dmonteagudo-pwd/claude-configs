@@ -1,5 +1,5 @@
 ---
-description: AL development engineering principles — always loaded
+description: AL development engineering principles
 ---
 
 # Engineering Principles

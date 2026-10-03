@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Normalizes upstream author-specific config after every git pull / git merge.
-# Handles:
-#   1. /home/stefan/claude-configs -> ~/claude-configs (absolute paths)
-#   2. bctb-mcp args: wraps with bash -c so ~ expands on Windows
-#   3. Linux-only / Docker-only skills removed (not applicable to Windows/Prodware)
+# Handles, in order:
+#   -1. Removes upstream files this fork does not use (.mcp.jsonc)
+#       and disables hooks.json (POSIX scripts, not runnable on Windows)
+#    0. Removes Linux-only / Docker-only skills and stale backups
+#    1. /home/stefan/claude-configs -> ~/claude-configs (absolute paths)
+#    2. bctb-mcp args: wraps with bash -c so ~ expands on Windows
+#    3. Republishes the plugins to Antigravity (script in claude-configs-bc)
 
 set -euo pipefail
 

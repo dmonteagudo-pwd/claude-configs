@@ -19,8 +19,9 @@ claude-configs/
 
 ## Working in this repo
 
-- **Branch model:** `develop` for work, `master` as stable. Push to `develop`; merge to `master`
-  after verification.
+- **Branch model:** `develop` for work. It is protected on GitHub: changes reach it through
+  pull requests. `master` mirrors upstream and stays behind `develop` on purpose; never merge
+  `develop` into it. `.githooks/post-merge` normalizes upstream changes after each pull.
 - **Commit style:** conventional commits (`feat`, `fix`, `docs`, `refactor`).
 - **No application code lives here.** Changes affect every project that enables the plugin.
   Test in a real project before pushing.
@@ -38,10 +39,10 @@ The 5 rules in `profile-al-development/rules/` carry `globs: ["**/*.al"]` frontm
 Copilot/Cursor compatibility. **Claude Code does not auto-load a plugin's `rules/` directory**,
 and ignores `globs` and `alwaysApply` frontmatter entirely.
 
-In Claude Code, rules are loaded strictly **on demand**: the plugin's `CLAUDE.md` (and project
-overlays like `profile-bc-prodware`) instruct the model to read specific rule files via the
-`Read` tool before the first action on AL code, architecture, or naming — ensuring 0 passive
-token cost at session start.
+Claude Code does not load the plugin's `CLAUDE.md` either. The rules apply only when something
+tells the model to read them: the `develop`, `fix`, `test` and `review-checklists` skills cite
+`rules/`, and a project overlay or the project's own `CLAUDE.md` can name rule files with a load
+trigger. A project overlay's rules prevail over these. No passive token cost at session start.
 
 ## MCP servers
 

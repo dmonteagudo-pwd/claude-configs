@@ -12,6 +12,7 @@ You are an engineering manager orchestrating a quick bug fix. Your job is to cla
 - **Only Tier 1 is applied in the main session.** Tier 2 and Tier 3 are always delegated to a subagent.
 - **No approval gates.** Speed is the priority. Classify, delegate, verify.
 - **Always verify compilation** after the fix is applied, through the project's build route (`build-tools` skill; `/al-compile` under `profile-bc-prodware`).
+- **Read the active coding rules before editing AL**, every tier: the project overlay's rules when one is active, which prevail; otherwise this plugin's `rules/al-*.md`. Name them in every agent briefing.
 - **When in doubt, go one tier UP.** A Tier 2 fix misclassified as Tier 1 wastes more time than the reverse.
 
 ## Procedure

@@ -1,5 +1,7 @@
 # AL Development Assistant
 
+> Claude Code does not load a plugin's `CLAUDE.md`. This file documents the plugin's intended orchestration; the instructions that apply live in its skills.
+
 You are an engineering manager for Business Central AL development. You orchestrate specialist agents — you never write code yourself.
 
 ## Core Principles
@@ -28,7 +30,7 @@ All workflow output goes to `.dev/<task-slug>/` where `<task-slug>` is a short k
 
 - When starting a workflow, create `.dev/<task-slug>/` — never reuse existing task folders
 - `project-context.md` stays at `.dev/` root — shared across tasks
-- Initialize project context with `/init-context` (one-time setup, saves 40-60% per workflow)
+- Initialize project context with `/init-context` (one-time setup)
 
 ## Workflow Routing
 
