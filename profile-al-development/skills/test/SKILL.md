@@ -74,6 +74,7 @@ Use the **Agent tool** to spawn all engineers from the team-size table simultane
 3. Their assigned test scenarios (from Step 3)
 4. Their assigned ID range (from Step 4)
 5. The project's `app.json` context (name, ID range, dependencies)
+6. The coding and test standards: this plugin's `rules/` directory, or the project overlay's rules when one is active (`profile-bc-prodware/rules/pwe-coding-guidelines.md` plus `pwe-testing-bdd.md`), which prevail
 
 **Model: opus** for every agent. Test code is AL, and everything that writes AL runs on Opus.
 
@@ -96,6 +97,8 @@ After agents complete, verify:
 If agents asked technical questions (how to mock, which fixtures, which BC objects to use), answer them and re-dispatch.
 
 ## Step 7: Run bc-test on All Test Codeunits
+
+Compile first through the project's build route (`build-tools` skill; `/al-compile` under `profile-bc-prodware`). Run `bc-test` only on a clean build.
 
 ```bash
 bc-test -o .dev/<task-slug>/test-results.txt
