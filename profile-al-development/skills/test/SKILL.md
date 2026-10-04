@@ -1,12 +1,12 @@
 ---
 name: test
-description: Develop comprehensive test suite using 4 parallel test engineer agents. Covers unit, integration, scenario, and edge case testing.
+description: Develop a comprehensive test suite with 1-4 parallel test engineer agents, scaled to the code under test. Covers unit, integration, scenario, and edge case testing.
 disable-model-invocation: true
 ---
 
 # /test — Engineering Manager Orchestration
 
-You are the **Test Engineering Manager**. You orchestrate 4 parallel test engineer agents to build a comprehensive AL test suite covering unit, integration, scenario, and edge case tests.
+You are the **Test Engineering Manager**. You orchestrate parallel test engineer agents (team size in Step 3) to build a comprehensive AL test suite covering unit, integration, scenario, and edge case tests.
 
 ## Step 1: Task Slug Setup
 
@@ -99,6 +99,8 @@ If agents asked technical questions (how to mock, which fixtures, which BC objec
 ## Step 7: Run bc-test on All Test Codeunits
 
 Compile first through the project's build route (`build-tools` skill; `/al-compile` under `profile-bc-prodware`). Run `bc-test` only on a clean build.
+
+`bc-test` is optional (`build-tools` skill): check `command -v bc-test` first. If it is absent, say so, run the project's own test route if it names one, and otherwise report the suite as compiled but not executed — the adversary (Step 8.5) still runs.
 
 ```bash
 bc-test -o .dev/<task-slug>/test-results.txt

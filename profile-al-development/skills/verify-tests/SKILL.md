@@ -58,7 +58,7 @@ See `al-runner --guide` for the full reference.
 
 `al-mutate` writes `06-mutations.json` automatically using `--log .dev/<task-slug>/06-mutations.json`. The log is append-only (schema_version 1) with entries for each mutation including `file`, `line`, `original`, `mutated`, and `status` (KILLED / SURVIVED / COMPILE_ERROR / OBSOLETE / TIMED_OUT).
 
-Read this file after `al-mutate run` or `al-mutate replay` to extract results for the verdict report. Do not manually edit the log — `al-mutate` manages it.
+Read this file after `al-mutate run` or `al-mutate replay` to extract results for the verdict report. When `al-mutate` writes the log, do not edit it by hand — `al-mutate` manages it.
 
 ---
 
@@ -89,8 +89,8 @@ This is a hard stop. If a mutation cannot be reverted, `git checkout -- <file>` 
 
 Check whether `.dev/<task-slug>/06-mutations.json` exists.
 
-- **Does not exist** → **First Run**. Proceed to Step 2 (read code), then Step 4 (new mutations).
-- **Exists** → **Subsequent Run**. Proceed to Step 2 (read code), then Step 3 (replay missed mutations first).
+- **Does not exist** → **First Run**. Step 2 (read code), then Step 4 (assertion audit) and Step 5 (new mutations).
+- **Exists** → **Subsequent Run**. Step 2 (read code), then Step 3 (replay missed mutations first), Step 4 and Step 5.
 
 ---
 
@@ -138,8 +138,8 @@ Obsolete (code changed): N  ~
 ```
 
 **After replay:**
-- If there are still-survived mutations → include them in the final Required Fixes list, then continue to Step 4 to find new mutations.
-- If all previously-survived are now killed → continue to Step 4 to find new mutations.
+- If there are still-survived mutations → include them in the final Required Fixes list, then continue to Step 4.
+- If all previously-survived are now killed → continue to Step 4.
 - Either way, always continue to Step 4. A clean replay just means the floor was raised — not that the ceiling has been reached.
 
 ---
@@ -196,12 +196,9 @@ For each manual mutation: apply → run `al-runner ./src ./test` → record resu
 
 ## Step 6: Update Mutation Log
 
-Write the updated `.dev/<task-slug>/06-mutations.json`:
+With `al-mutate`, skip this step: it owns `06-mutations.json` (see *Mutation Log Format*).
 
-- Append a new entry to `runs[]` with this run's number, date, and all mutations applied (replayed + new)
-- For replayed mutations: update their status (`CAUGHT`, `STILL MISSED`, `OBSOLETE`)
-- For new mutations: add as new entries with their result
-- Never delete previous run history — the full run history must be preserved
+With manual mutations only, append to `.dev/<task-slug>/06-mutations.json` one entry per mutation in the same shape (`file`, `line`, `original`, `mutated`, `status`) and with the same statuses (`KILLED`, `SURVIVED`, `COMPILE_ERROR`, `OBSOLETE`). For a replayed mutation, append a new entry with its current status. Never delete earlier entries.
 
 ---
 
@@ -245,15 +242,15 @@ Write `.dev/<task-slug>/06-test-verification.md`:
 
 | ID | Mutation | Status |
 |----|----------|--------|
-| M002 | src/X.al:87 — removed error guard | CAUGHT ✓ |
-| M005 | src/Y.al:12 — flipped condition | STILL MISSED ✗ |
+| M002 | src/X.al:87 — removed error guard | KILLED ✓ |
+| M005 | src/Y.al:12 — flipped condition | SURVIVED ✗ |
 
 ## New Mutation Results
 
 | ID | Mutation | Caught By |
 |----|----------|-----------|
 | M010 | src/X.al:42 — condition flip | ValidateCreditLimit_Negative_ThrowsError |
-| M011 | src/Y.al:55 — validation removed | NOT CAUGHT |
+| M011 | src/Y.al:55 — validation removed | SURVIVED |
 
 ### New Mutations That Slipped Through
 For each uncaught new mutation, explain:

@@ -178,7 +178,7 @@ Every TDD cycle has **exactly 3 hard stops** where user approval is required:
 
 | Approach | When to Use |
 |----------|------------|
-| **TDD (this protocol)** | New features, complex business logic, critical calculations, when user explicitly requests TDD |
+| **TDD (this protocol)** | `/develop`, when `.dev/<task-slug>/05-test-specification.md` exists (the user writes it to opt in) |
 | **Standard testing (`/test` skill)** | Existing code that needs test coverage, bulk test creation, when speed is more important than TDD discipline |
 
-The `/test` skill can operate in either mode. TDD mode is activated when the user requests it or when the develop skill triggers test-first development.
+`/develop` runs this protocol through its developer agents; `/test` has no TDD mode.

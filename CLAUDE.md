@@ -19,8 +19,8 @@ claude-configs/
 
 ## Working in this repo
 
-- **Branch model:** `develop` for work. It is protected on GitHub: changes reach it through
-  pull requests. `master` mirrors upstream and stays behind `develop` on purpose; never merge
+- **Branch model:** `develop` for work; commits land on it directly, without feature branches
+  or pull requests. `master` mirrors upstream and stays behind `develop` on purpose; never merge
   `develop` into it. `.githooks/post-merge` normalizes upstream changes after each pull.
 - **Commit style:** conventional commits (`feat`, `fix`, `docs`, `refactor`).
 - **No application code lives here.** Changes affect every project that enables the plugin.

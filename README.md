@@ -25,16 +25,6 @@ claude-configs/
 └── README.md (this file)
 ```
 
-## Quick Start Configuration
-
-Before using these plugins:
-
-1. **Update external tool paths (optional):**
-   - In `profile-al-development/.mcp.json`, update the path to the Serena tool if you're using it
-   - Or remove the serena MCP server configuration if not applicable
-
-All other paths use `~` which expands to your home directory automatically.
-
 ## Setup Instructions
 
 ### Initial Setup (First Computer)

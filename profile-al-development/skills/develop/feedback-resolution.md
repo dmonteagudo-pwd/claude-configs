@@ -13,7 +13,7 @@ Blocks progress. Must be fixed before code can be accepted.
 - Design flaw that breaks core functionality (wrong architecture, missing essential component)
 - Compilation error
 
-### SERIOUS
+### HIGH
 Significant risk. Should be fixed unless there is a documented reason not to.
 - Performance issue that will degrade under production load
 - DRY violation (duplicated logic that will diverge over time)
@@ -77,8 +77,8 @@ After all findings are dispositioned, produce a summary table:
 
 | # | Finding | Reviewer | Severity | Disposition | Action / Reasoning |
 |---|---------|----------|----------|-------------|-------------------|
-| 1 | Missing SetLoadFields on Customer.Get | Performance | SERIOUS | ACCEPT-FIX | Assigned to Dev-1, fix in Customer Mgt. codeunit |
-| 2 | No interface for HTTP dependency | Test Coverage | SERIOUS | ACCEPT-DEFER | Will address in Phase 2 when external integration is built. Tracked in 04-deferred-issues.md |
+| 1 | Missing SetLoadFields on Customer.Get | Performance | HIGH | ACCEPT-FIX | Assigned to Dev-1, fix in Customer Mgt. codeunit |
+| 2 | No interface for HTTP dependency | Test Coverage | HIGH | ACCEPT-DEFER | Will address in Phase 2 when external integration is built. Tracked in 04-deferred-issues.md |
 | 3 | ToolTip could be more descriptive | AL Expert | MINOR | ACKNOWLEDGE | Current ToolTip is adequate for MVP |
 | 4 | Potential SQL injection via SetFilter | Security | CRITICAL | ACCEPT-FIX | Assigned to Dev-2, add input sanitization |
 | 5 | Unused local variable | AL Expert | MINOR | DISMISS | Variable is used in a conditional branch the reviewer missed (line 45) |
@@ -92,7 +92,7 @@ The review-fix cycle is complete when ALL of the following are true:
 
 1. Every finding from every reviewer has a disposition.
 2. No findings with disposition ACCEPT-FIX remain (all fixes have been applied and verified).
-3. Each reviewer whose CRITICAL/SERIOUS findings were fixed confirms: **"APPROVED"**.
+3. Each reviewer whose CRITICAL/HIGH findings were fixed confirms: **"APPROVED"**.
 4. All ACCEPT-DEFER items are documented in `.dev/<task-slug>/04-deferred-issues.md`.
 
 ---
@@ -121,13 +121,13 @@ Track review iterations in the code review report:
 ## Review Iterations
 
 ### Iteration 1
-- Findings: 12 (3 Critical, 5 Serious, 4 Minor)
+- Findings: 12 (3 Critical, 5 High, 4 Minor)
 - Dispositions: 3 ACCEPT-FIX, 2 ACCEPT-DEFER, 4 ACKNOWLEDGE, 3 DISMISS (with reasoning)
 - Fixes applied: 3
 - Status: Re-review needed for Critical fixes
 
 ### Iteration 2
-- Findings: 2 (0 Critical, 1 Serious, 1 Minor)
+- Findings: 2 (0 Critical, 1 High, 1 Minor)
 - Dispositions: 1 ACCEPT-FIX, 1 ACKNOWLEDGE
 - Fixes applied: 1
 - Status: APPROVED by all reviewers

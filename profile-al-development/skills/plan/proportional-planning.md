@@ -12,10 +12,7 @@ No requirements document. No solution plan. No architect agents. Just do the wor
 
 ### SIMPLE (2-3 files)
 
-**Total plan: 100-150 lines.**
-
-- Brief requirements: 50-75 lines
-- Brief solution: 50-75 lines
+**A page or two**: requirements and solution together read in a few minutes.
 
 What to include:
 - What you're building (1 paragraph)
@@ -32,10 +29,7 @@ What to skip:
 
 ### MEDIUM (4-8 files)
 
-**Total plan: 200-400 lines.**
-
-- Requirements: 100-150 lines
-- Solution: 100-250 lines
+**A short design document**: the decisions and the object allocation, nothing a developer would infer.
 
 What to include:
 - Brief architecture overview (2-3 paragraphs)
@@ -53,10 +47,7 @@ What to skip:
 
 ### COMPLEX (9+ files)
 
-**Total plan: 400-800 lines.**
-
-- Requirements: 150-300 lines
-- Solution: 300-600 lines
+**A full design document**, still about architecture, not implementation.
 
 What to include:
 - Full architecture description
@@ -68,7 +59,7 @@ What to include:
 - Risk assessment
 - Diagrams where they genuinely clarify (not decorate)
 
-Even COMPLEX plans should not exceed 800 lines total. If your plan is longer, you're describing implementation, not architecture.
+If a plan starts describing procedure bodies, it has moved from architecture to implementation: cut that part.
 
 ## Red Flags — Signs of Over-Planning
 
@@ -77,7 +68,7 @@ Watch for these anti-patterns:
 - **ASCII diagrams for 3-file changes.** If you can describe the architecture in 2 sentences, you don't need a diagram.
 - **Alternative approaches analysis for obvious patterns.** If you're adding a table extension and a page extension, there is no "alternative approach" to debate.
 - **User stories for field additions.** "As a sales manager, I want to see the discount percentage on the sales order" — this adds nothing the requirement didn't already say.
-- **500+ line plans for simple features.** If the plan is longer than the implementation will be, something has gone wrong.
+- **Plans longer than the feature.** If the plan is longer than the implementation will be, something has gone wrong.
 - **Mermaid diagrams for CRUD operations.** Create, Read, Update, Delete does not need a flowchart.
 - **Testability architecture for a single FlowField.** Not everything needs dependency injection analysis.
 
@@ -199,6 +190,6 @@ The second plan has everything a developer needs. The first plan has 826 lines o
 
 ## Enforcement
 
-When reviewing architect output or your own plans, count the lines. If a SIMPLE task plan exceeds 200 lines, cut it. If a MEDIUM task plan exceeds 500 lines, cut it. If any plan exceeds 800 lines, something is wrong.
+When reviewing architect output or your own plans, cut whatever the tier's "What to skip" list names.
 
 Ask yourself: "Could a competent AL developer build this from my plan?" If yes, stop writing. If no, add only what's missing — don't add what's obvious.

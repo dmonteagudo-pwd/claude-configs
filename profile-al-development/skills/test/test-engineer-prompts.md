@@ -67,7 +67,7 @@ codeunit 50100 "Unit Tests - Credit Limit"
 
 ### Naming Convention
 
-Follow the pattern: **WhatYouTest_Scenario_ExpectedResult**
+When the active test rules name no pattern, use **WhatYouTest_Scenario_ExpectedResult**.
 
 Examples:
 - `ValidateCreditLimit_Negative_ThrowsError`
@@ -79,11 +79,10 @@ Examples:
 
 1. **One test per behavior** — never test two things in one `[Test]` procedure
 2. **Specific assertion messages** — always include the third parameter in `Assert.AreEqual()` explaining what went wrong
-4. **Isolate dependencies proportionally** — mock an external service (HTTP) through its interface; do not introduce an interface only to mock an internal codeunit (follow the active architecture rules)
-4. **Use mocks for dependencies** — if the function depends on another codeunit, use interfaces and mock implementations to isolate it
-5. **No database calls if possible** — unit tests should not need records; if they do, use temporary records
-6. **Test both happy path and failure path** for each function
-7. **Keep tests fast** — no Sleep(), no HTTP calls, no heavy setup
+3. **Isolate dependencies proportionally** — mock an external service (HTTP) through its interface; do not introduce an interface only to mock an internal codeunit (follow the active architecture rules)
+4. **No database calls if possible** — unit tests should not need records; if they do, use temporary records
+5. **Test both happy path and failure path** for each function
+6. **Keep tests fast** — no Sleep(), no HTTP calls, no heavy setup
 
 ---
 
@@ -119,10 +118,13 @@ codeunit 50200 "Integration Tests - Order Processing"
         CustLedgerEntry: Record "Cust. Ledger Entry";
         LibrarySales: Codeunit "Library - Sales";
         PostedDocNo: Code[20];
+        ExpectedAmount: Decimal;
     begin
         // [ARRANGE]
         LibrarySales.CreateSalesOrder(SalesHeader);
         AddCustomDiscountLine(SalesHeader);
+        SalesHeader.CalcFields("Amount Including VAT");
+        ExpectedAmount := SalesHeader."Amount Including VAT";
 
         // [ACT]
         PostedDocNo := LibrarySales.PostSalesDocument(SalesHeader, true, true);
@@ -130,8 +132,9 @@ codeunit 50200 "Integration Tests - Order Processing"
         // [ASSERT]
         CustLedgerEntry.SetRange("Document No.", PostedDocNo);
         CustLedgerEntry.FindFirst();
-        Assert.AreNotEqual(0, CustLedgerEntry.Amount,
-            'Customer ledger entry should have non-zero amount after posting.');
+        CustLedgerEntry.CalcFields(Amount);
+        Assert.AreEqual(ExpectedAmount, CustLedgerEntry.Amount,
+            'Customer ledger entry amount should equal the order total after the custom discount.');
     end;
 
     [Test]
@@ -153,8 +156,9 @@ codeunit 50200 "Integration Tests - Order Processing"
         // [ASSERT]
         DefaultDimension.SetRange("Table ID", Database::Customer);
         DefaultDimension.SetRange("No.", Customer."No.");
-        Assert.RecordIsNotEmpty(DefaultDimension,
-            'Default dimension should be created by event subscriber on customer insert.');
+        DefaultDimension.FindFirst();
+        Assert.AreEqual(ExpectedDimensionCode(), DefaultDimension."Dimension Code",
+            'The subscriber should create the expected default dimension on customer insert.');
     end;
 
     var
@@ -325,9 +329,11 @@ codeunit 50400 "Edge Case Tests - Credit Limit"
     begin
         // [ARRANGE] — Boundary: zero is a valid credit limit
 
-        // [ACT] + [ASSERT]
+        // [ACT]
         CreditMgmt.ValidateCreditLimit(0);
-        // No error means success — zero credit limit is valid (means no credit)
+
+        // [ASSERT] — zero means no credit: the validated limit is kept as 0
+        Assert.AreEqual(0, CreditMgmt.GetCreditLimit(), 'Zero is a valid credit limit and must be kept as 0.');
     end;
 
     [Test]
@@ -339,9 +345,11 @@ codeunit 50400 "Edge Case Tests - Credit Limit"
         // [ARRANGE]
         MaxDecimal := 999999999999999.99; // BC Decimal max practical value
 
-        // [ACT] + [ASSERT]
+        // [ACT]
         CreditMgmt.ValidateCreditLimit(MaxDecimal);
-        // Should handle maximum values without overflow
+
+        // [ASSERT]
+        Assert.AreEqual(MaxDecimal, CreditMgmt.GetCreditLimit(), 'The maximum value must be stored without overflow or rounding.');
     end;
 
     [Test]

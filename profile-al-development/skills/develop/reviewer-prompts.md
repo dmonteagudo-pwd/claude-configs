@@ -55,7 +55,7 @@ Read, Grep, Glob
 - Files reviewed: <count>
 - Critical issues: <count>
 - High issues: <count>
-- Medium issues: <count>
+- Minor issues: <count>
 
 ## Critical Issues
 | # | File:Line | Issue | Risk | Fix Recommendation |
@@ -66,21 +66,13 @@ Read, Grep, Glob
 | # | File:Line | Issue | Risk | Fix Recommendation |
 |---|-----------|-------|------|-------------------|
 
-## Medium Issues
+## Minor Issues
 | # | File:Line | Issue | Risk | Fix Recommendation |
 |---|-----------|-------|------|-------------------|
 
 ## Security Observations
 <General observations about the security posture of the code>
 ```
-
-### Debate Instructions
-
-When reviewing findings from other specialists:
-- If the AL Expert suggests a pattern change, evaluate whether the new pattern introduces security risks.
-- If the Performance Reviewer suggests caching, evaluate whether the cache could serve stale authorization data.
-- If the Test Coverage Reviewer notes missing tests, prioritize security-related test gaps as higher severity.
-- Challenge any suggestion that weakens input validation or broadens permissions for convenience.
 
 ---
 
@@ -142,7 +134,7 @@ Read, Grep, Glob
 - Files reviewed: <count>
 - Critical issues: <count>
 - High issues: <count>
-- Medium issues: <count>
+- Minor issues: <count>
 
 ## Critical Issues
 | # | File:Line | Issue | Best Practice | Fix Recommendation |
@@ -153,21 +145,13 @@ Read, Grep, Glob
 | # | File:Line | Issue | Best Practice | Fix Recommendation |
 |---|-----------|-------|---------------|-------------------|
 
-## Medium Issues
+## Minor Issues
 | # | File:Line | Issue | Best Practice | Fix Recommendation |
 |---|-----------|-------|---------------|-------------------|
 
 ## Code Quality Observations
 <General observations about code quality and maintainability>
 ```
-
-### Debate Instructions
-
-When reviewing findings from other specialists:
-- If the Security Reviewer flags a permission issue, validate whether the AL pattern actually requires those permissions or if a different pattern avoids the need.
-- If the Performance Reviewer suggests denormalization, evaluate the maintenance cost and whether a FlowField or query object is more appropriate.
-- If the Test Coverage Reviewer flags testability issues, suggest specific AL patterns (interfaces, events, dependency injection) that improve testability.
-- Push back on any suggestion that violates BC platform conventions, even if it "works."
 
 ---
 
@@ -229,7 +213,7 @@ Read, Grep, Glob
 - Files reviewed: <count>
 - Critical issues: <count>
 - High issues: <count>
-- Medium issues: <count>
+- Minor issues: <count>
 - Estimated impact: <LOW / MEDIUM / HIGH based on data volume sensitivity>
 
 ## Critical Issues (Will cause problems at production scale)
@@ -241,21 +225,13 @@ Read, Grep, Glob
 | # | File:Line | Pattern | Impact | Fix Recommendation |
 |---|-----------|---------|--------|-------------------|
 
-## Medium Issues (Improvement opportunity)
+## Minor Issues (Improvement opportunity)
 | # | File:Line | Pattern | Impact | Fix Recommendation |
 |---|-----------|---------|--------|-------------------|
 
 ## Performance Observations
 <General observations about performance characteristics and scaling behavior>
 ```
-
-### Debate Instructions
-
-When reviewing findings from other specialists:
-- If the Security Reviewer requires additional permission checks, evaluate the performance cost and suggest efficient patterns (e.g., check once at entry, not per-record).
-- If the AL Expert suggests pattern changes, evaluate whether the suggested pattern performs better or worse at scale.
-- If the Test Coverage Reviewer suggests more assertions, note where performance tests (timing assertions) would add value.
-- Push back on any "clean code" suggestion that significantly degrades performance without providing a performant alternative.
 
 ---
 
@@ -328,7 +304,7 @@ Read, Grep, Glob
 ## Testability Issues
 | # | File:Line | Issue | Impact | Fix Recommendation |
 |---|-----------|-------|--------|-------------------|
-| 1 | ... | Hard dependency on HttpClient | Cannot unit test HTTP integration | Wrap in interface "IHttpProvider" |
+| 1 | ... | Hard dependency on HttpClient | Cannot unit test HTTP integration | Put the HTTP call behind an interface (named per the active naming rule) |
 
 ## Missing Test Scenarios
 | # | Code Area | Missing Scenario | Risk if Untested |
@@ -343,11 +319,3 @@ Read, Grep, Glob
 ## Testability Observations
 <General observations about testability architecture and recommendations>
 ```
-
-### Debate Instructions
-
-When reviewing findings from other specialists:
-- If the Security Reviewer identifies a vulnerability, check whether a test exists that would catch it. If not, flag the missing test as HIGH priority.
-- If the AL Expert suggests adding integration events, evaluate whether those events also improve testability (they usually do — support this).
-- If the Performance Reviewer identifies an N+1 pattern, note that a performance regression test should exist for that code path.
-- Advocate for testability even when it requires slight design changes. Testable code is more maintainable code.

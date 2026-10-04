@@ -98,4 +98,4 @@ Agent produces code → Reviewer checks against checklist → Finds:
 Result: User receives polished, standards-compliant code on the first delivery.
 ```
 
-The goal is to catch every issue before the user does. A review that finds nothing wrong should be the exception, not the default.
+The goal is to catch every issue before the user does. Report each issue with its file and line; when every checklist item passes, a clean review is a valid result.
