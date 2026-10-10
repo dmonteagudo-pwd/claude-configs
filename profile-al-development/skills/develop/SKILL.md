@@ -85,7 +85,7 @@ When all development is complete, review proceeds along **two orthogonal axes** 
 For Axis 2:
 1. Read the reviewer prompts from `reviewer-prompts.md` in this skill directory.
 2. Collect the list of ALL AL files created by all developers.
-3. Each reviewer gets their specific section from `reviewer-prompts.md`, the file list, and the solution plan for context.
+3. Each reviewer gets **Rules for All Reviewers** and their specific section from `reviewer-prompts.md`, the file list, and the solution plan for context.
 4. Use model: **sonnet** for all reviewers.
 
 **Spawn all 4 technical reviewers simultaneously.**
@@ -98,7 +98,7 @@ When all review outputs are collected:
    - If any requirement from `01-requirements.md` is missing, incomplete, or incorrectly implemented, this is automatically **CRITICAL**.
    - **Rule:** A clean pass on Axis 2 (Technical Standards) can NEVER override a failure in Axis 1 (Spec Compliance). Code that follows every AL convention but implements the wrong thing is REJECTED.
 2. **Verify Evidence on Axis 2 (Technical Standards):**
-   - Validate that each finding cites an exact file and line number and demonstrates why it is wrong before accepting it as an issue. Discard unverified or hallucinated findings.
+   - Validate that each finding cites an exact file and line number and demonstrates why it is wrong before accepting it as an issue. Discard unverified or hallucinated findings. A HIGH or CRITICAL finding without a cited rule, Microsoft Learn article or compiler/analyzer diagnostic is downgraded to MINOR and marked as opinion.
 3. **Categorize verified Axis 2 findings:**
    - **CRITICAL** — Must fix. Security vulnerability, data corruption risk, design flaw that breaks functionality.
    - **HIGH** — Should fix. Performance issue, DRY violation, missing error handling, poor pattern usage.
