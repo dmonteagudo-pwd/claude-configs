@@ -36,7 +36,7 @@ Zero tolerance for duplicate logic. Before writing any procedure, check whether 
 
 **Single Responsibility**: each codeunit has one reason to change; each procedure does exactly one thing. If a procedure needs "and" to describe what it does, split it.
 
-**Open/Closed**: extend behavior via integration events and interfaces. Do not modify existing logic to accommodate new requirements — add an extension point.
+**Open/Closed (proportional)**: what other apps already consume (shipped public procedures, events, interfaces) is extended, never changed in its contract. Inside your own app, change the code directly when a requirement changes; add an extension point only for a real or stated consumer — never for a hypothetical one (see `al-architecture.md`).
 
 **Liskov**: every implementation of an interface must be fully substitutable. No partial implementations, no "not supported" stubs in production code.
 

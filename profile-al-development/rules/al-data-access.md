@@ -29,4 +29,4 @@ Use `CalcFields` only when you already have the record in memory and need to (re
 
 ## Integration Events
 
-Raise `[IntegrationEvent(false, false)]` events at meaningful extension points — typically `OnBefore...` and `OnAfter...` around the core operation. Keep the event procedure body empty.
+Publish an event only for a real or stated consumer: another app that depends on this one, or a product that is extended per customer. Then raise `[IntegrationEvent(false, false)]` events at meaningful extension points — typically `OnBefore...` and `OnAfter...` around the core operation — and keep the event procedure body empty. An app nothing depends on publishes no events "in case" (see `al-architecture.md`).
