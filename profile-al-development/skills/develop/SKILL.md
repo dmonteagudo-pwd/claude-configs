@@ -85,9 +85,8 @@ When all development is complete, review proceeds along **two orthogonal axes** 
 For Axis 2:
 1. Read the reviewer prompts from `reviewer-prompts.md` in this skill directory.
 2. Collect the list of ALL AL files created by all developers.
-3. If `BCQUALITY_ROOT` is set, run `node <this skill directory>/bcquality-lookup.mjs --top 8 --files <AL files>` once. It prints up to 8 ranked BCQuality articles (score, absolute path, title, matched keywords), or nothing when the index is missing.
-4. Each reviewer gets **Rules for All Reviewers** and their specific section from `reviewer-prompts.md`, the file list, the solution plan for context, and the article list from step 3 when it is not empty.
-5. Use model: **sonnet** for all reviewers.
+3. Each reviewer gets **Rules for All Reviewers** and their specific section from `reviewer-prompts.md`, the file list, and the solution plan for context.
+4. Use model: **sonnet** for all reviewers.
 
 **Spawn all 4 technical reviewers simultaneously.**
 
