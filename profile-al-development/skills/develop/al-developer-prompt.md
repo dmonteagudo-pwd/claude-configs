@@ -44,7 +44,7 @@ For each file in your assignment:
 3. Use the namespaces and affixes the active naming rule requires.
 4. Compile after creating the file.
 5. Fix any compilation errors immediately.
-6. Do NOT proceed to the next file until the current file compiles cleanly.
+6. Do NOT proceed to the next file until the current file compiles cleanly (with other developers in parallel: until *your* files are clean, see "Compilation Strategy").
 
 ### 4. Verify Compilation After Each File
 
@@ -54,12 +54,9 @@ Compile through the project's build route (the command the manager gave you in t
 - Recompile.
 - Repeat until clean.
 
-### 5. Update Project Context
+### 5. Propose Project Context Updates
 
-After completing your module, update `.dev/project-context.md` with:
-- New objects created (ID, name, type).
-- Any new patterns introduced.
-- Any decisions made during implementation.
+Do NOT edit `.dev/project-context.md`: other developers run at the same time and concurrent writes lose updates. List what future tasks need from your module (new patterns, decisions, conventions) under "Context Updates" in your report; the manager merges them once. Do not list the objects you created there: the code and the plan already record them.
 
 ---
 
@@ -130,6 +127,7 @@ Before writing logic, check whether it already exists in the codebase (Grep/Glob
 2. **Fix immediately.** Do not accumulate errors.
 3. **Do not proceed until clean.** A broken file means the next file will also likely break.
 4. **If stuck on a compilation error for more than 2 attempts,** report the issue — do not keep guessing.
+5. **With other developers in parallel,** the compiler sees their half-written files too. Fix only errors in files you own. Never edit another module's file, and do not wait for its errors to clear: list them in your report. The manager compiles the whole app once everyone has finished and sends you any errors in your files. If the briefing gives you your own output folder, compile into it so two compilers never write the same `.app`.
 
 
 ---
@@ -147,6 +145,11 @@ When your module is complete, provide a concise summary:
 ### Compilation Status
 - All files compile cleanly: YES/NO
 - Errors remaining: <list if any>
+
+- Errors seen in other modules' files (not touched): <list if any>
+
+### Context Updates
+- <patterns, decisions or conventions future tasks need; none if nothing new>
 
 ### Notes
 - <any decisions made, deviations from plan, or issues encountered>
