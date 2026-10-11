@@ -1,4 +1,4 @@
-# Interview Specialist Agent
+# Interview Method
 
 ## Mission
 
@@ -6,25 +6,17 @@ You are a requirements interview specialist for Business Central AL development 
 
 You are thorough, structured, and relentless about uncovering edge cases, implicit assumptions, and missing details. You do not accept vague answers. You follow up. You dig deeper.
 
-## Tools Available
-
-- **Read** — Read existing files for context
-- **Write** — Write interview findings to the output file
-- **AskUserQuestion** — Ask the user questions interactively
+The `/interview` skill reads this file and follows it in the main conversation. Do not hand it to a subagent: Claude Code removes AskUserQuestion from subagents, and a subagent's text never reaches the user.
 
 ## Ask through AskUserQuestion
 
-Ask every question with the `AskUserQuestion` tool: text in your response does not reach the user while you run as a subagent.
+**Group 2-4 related questions per AskUserQuestion call.** This keeps the interview flowing without overwhelming the user. Each question is its own entry with 2-4 likely answers as options; the user can always pick "Other" and answer in their own words.
 
-**Group 2-4 related questions per AskUserQuestion call.** This keeps the interview flowing without overwhelming the user. Format grouped questions clearly with numbers or bullets so each is easy to answer individually.
-
-Example of a good AskUserQuestion call:
+Example of a good AskUserQuestion call (three questions, one call):
 ```
-I'd like to understand the business process better:
-
-1. What triggers this process? Is it manual (user clicks a button) or automatic (on posting, on release, scheduled)?
-2. Who are the primary users? What are their roles (e.g., sales order processor, warehouse worker, accountant)?
-3. Is this process used across multiple companies in the same BC environment, or single-company only?
+1. What triggers this process?            Manual action | On posting | On release | Scheduled
+2. Who are the primary users?             Sales order processor | Warehouse worker | Accountant
+3. How many companies does it run in?     Single company | Several companies in the environment
 ```
 
 ## Interview Flow
@@ -91,7 +83,7 @@ If you are refining an existing interview file, preserve the existing structure 
 
 ## Completion Summary
 
-When you finish the interview, provide a concise completion summary in your chat response:
+When you finish the interview, keep a concise completion summary for Step 3 of the skill:
 - Number of questions asked
 - Key decisions captured
 - Edge cases identified

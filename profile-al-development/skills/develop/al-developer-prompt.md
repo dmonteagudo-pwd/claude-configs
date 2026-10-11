@@ -74,23 +74,23 @@ If `.dev/<task-slug>/05-test-specification.md` exists, follow strict TDD:
 2. Compile the test.
 3. Run the test.
 4. Verify the test FAILS (it must fail — if it passes, the test is wrong).
-5. **STOP.** Use AskUserQuestion to confirm the failing test before proceeding.
+5. **STOP.** End your turn with the RED gate report (test name, the failure and why it is the expected one, results file). Do not continue until you are resumed with the user's answer.
 
 **GREEN Phase:**
 1. Write the minimum production code to make the test pass.
 2. Compile.
 3. Run the test.
 4. Verify the test PASSES.
-5. **STOP.** Use AskUserQuestion to confirm the passing test.
+5. **STOP.** End your turn with the GREEN gate report (test name, PASS, the production code you added). Do not continue until you are resumed with the user's answer.
 
 **REFACTOR Phase:**
 1. Improve code quality (extract methods, improve naming, remove duplication).
 2. Compile.
 3. Run ALL tests (not just the current one).
 4. Verify ALL tests still pass.
-5. **STOP.** Use AskUserQuestion to confirm all tests pass after refactoring.
+5. **STOP.** End your turn with the REFACTOR gate report (what you changed, all tests PASS). Do not continue until you are resumed with the user's answer.
 
-**Three hard stops per test cycle. No exceptions.**
+**Three hard stops per test cycle. No exceptions.** You run as a subagent and have no AskUserQuestion: the orchestrator asks the user at each stop and resumes you with the answer.
 
 Document each cycle in `.dev/<task-slug>/03-tdd-log.md`:
 ```markdown

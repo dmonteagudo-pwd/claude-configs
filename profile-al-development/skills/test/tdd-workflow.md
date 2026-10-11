@@ -8,7 +8,7 @@ Shared reference for the `/develop` skill. It defines the strict TDD workflow th
 2. **NEVER** implement logic before the user confirms the test FAILS
 3. **NEVER** skip approval gates between phases
 4. **NEVER** batch multiple cycles — one test at a time
-5. **ALWAYS** use AskUserQuestion at phase gates (BLOCKING — do not proceed without user response)
+5. **ALWAYS** ask the user at phase gates (BLOCKING — do not proceed without user response). The gate is an AskUserQuestion call in the main conversation. A developer agent cannot make it: Claude Code removes AskUserQuestion from subagents. The agent ends its turn with the gate report, the orchestrator asks, then resumes the same agent with SendMessage
 
 ---
 

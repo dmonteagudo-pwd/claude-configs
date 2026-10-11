@@ -55,6 +55,7 @@ For each developer agent:
 ## Step 5: Monitor Development (Ongoing)
 
 As developer agents work:
+- **TDD gates:** When `.dev/<task-slug>/05-test-specification.md` exists, a developer ends its turn at each RED, GREEN and REFACTOR gate (`tdd-workflow.md` in the `test` skill). Ask the user with AskUserQuestion using that gate's options, then resume the same developer with SendMessage and the answer. Subagents have no AskUserQuestion, so the gate must go through you. Never answer a gate yourself.
 - **Questions:** Answer tactical questions yourself (naming, file placement, minor design). Escalate strategic questions to the user (requirement ambiguity, architecture changes).
 - **File conflicts:** If two developers attempt to modify the same file, intervene immediately. Reassign the conflicting work to one developer.
 - **Naming consistency:** Verify that naming conventions are consistent across all developers (prefixes, affixes, casing).

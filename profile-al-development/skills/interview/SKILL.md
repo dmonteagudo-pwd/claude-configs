@@ -1,12 +1,12 @@
 ---
 name: interview
-description: Deep requirements gathering through structured interview with specialist agent. Use when requirements are unclear, ambiguous, or complex.
+description: Deep requirements gathering through a structured interview. Use when requirements are unclear, ambiguous, or complex.
 disable-model-invocation: true
 ---
 
 # Interview Orchestration
 
-You are an engineering manager orchestrating a requirements interview. You spawn a specialist interview agent — you do NOT conduct the interview yourself.
+You are an engineering manager running a requirements interview. You conduct it yourself, in the main conversation: Claude Code removes AskUserQuestion from subagents, so a spawned interview agent could not ask the user anything and would fill the gaps with guesses.
 
 ## Workflow
 
@@ -16,22 +16,13 @@ Auto-generate a task slug from the user's request (lowercase, hyphenated, descri
 
 Create the directory `.dev/<task-slug>/` if it does not already exist.
 
-### Step 2: Spawn Interview Agent
+### Step 2: Conduct the Interview
 
-Spawn a **single** interview agent using the Agent tool with:
-- **Model:** sonnet
-- **Prompt:** The full contents of `interview-agent-prompt.md` from this skill's directory
-- **Context to pass:**
-  - The user's initial request (verbatim)
-  - The task slug (so agent writes to correct directory)
-  - The question categories from `question-categories.md` in this skill's directory
-  - Path to the output file: `.dev/<task-slug>/00-interview.md`
-
-Let the agent run. It will interact with the user directly via AskUserQuestion.
+Read `interview-agent-prompt.md` (the interview method and the `00-interview.md` format) and `question-categories.md` from this skill's directory. Follow them, starting from the user's initial request, and ask with AskUserQuestion. Write the findings to `.dev/<task-slug>/00-interview.md`.
 
 ### Step 3: Review Interview Findings
 
-Once the interview agent completes, read `.dev/<task-slug>/00-interview.md` and evaluate completeness. Check for:
+Once the interview is written, re-read `.dev/<task-slug>/00-interview.md` and evaluate completeness. Check for:
 - **Business context** — Why does this feature exist? Who benefits?
 - **Functional requirements** — What exactly should the system do?
 - **Data model** — What tables, fields, relationships are involved?
@@ -40,7 +31,7 @@ Once the interview agent completes, read `.dev/<task-slug>/00-interview.md` and 
 
 ### Step 4: Fill Gaps
 
-If any of the above areas are thin or missing, spawn the interview agent again with targeted follow-up questions focused on the gaps. Do NOT accept vague or incomplete answers — push for specifics.
+If any of the above areas are thin or missing, ask targeted follow-up questions focused on the gaps and update `00-interview.md`. Do NOT accept vague or incomplete answers — push for specifics.
 
 ### Step 5: Verify Business Logic Assumptions
 
@@ -50,7 +41,7 @@ Review all captured business logic. Look for:
 - Missing edge cases (what happens when X is zero? empty? null?)
 - BC-specific concerns (posting routines, dimension handling, number series, multi-company)
 
-If you find issues, have the agent ask targeted clarifying questions.
+If you find issues, ask targeted clarifying questions.
 
 ### Step 6: Write Requirements Document
 
@@ -76,7 +67,7 @@ Present the requirements summary to the user using AskUserQuestion with these op
 
 ## Rules
 
-- **Spawn the interview agent** — do NOT conduct the interview yourself. Your job is orchestration, quality review, and synthesis.
-- **Challenge incomplete requirements.** If the agent returns thin results, send it back with specific gaps to fill.
+- **Interview in the main conversation** — do NOT spawn a subagent for it: it has no AskUserQuestion.
+- **Challenge incomplete requirements.** If the answers are thin, go back with specific gaps to fill.
 - **Push for specifics over vague statements.** "It should be fast" becomes "Sub-2-second page load with 10K records." "Users need access" becomes "Which permission sets? Read-only or full CRUD?"
-- **Agent output goes to files.** The agent writes `00-interview.md`, you write `01-requirements.md`. Return a concise summary to the chat, not the full document.
+- **Output goes to files.** `00-interview.md` holds the findings, `01-requirements.md` your synthesis. Return a concise summary to the chat, not the full document.
