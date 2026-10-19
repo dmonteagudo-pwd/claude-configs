@@ -1,7 +1,6 @@
 ---
 name: develop
 description: Implement AL/BC solution using parallel development agents and 4-specialist review team. Spawns N developer agents for parallel modules, then 4 reviewer agents for comprehensive code review.
-disable-model-invocation: true
 ---
 
 # /develop — Engineering Manager Orchestration
