@@ -137,7 +137,7 @@ For each failing test:
 
 ## Step 8.5: Run Test Adversary (MANDATORY)
 
-Once all tests pass, invoke `/verify-tests`. It runs automatically in a forked sub-agent with clean context (`context: fork`) — no manual agent spawning needed.
+Once all tests pass — or, with no test runner, once the suite compiles (Step 7) — invoke `/verify-tests`. Tell it which of the two applies. It runs automatically in a forked sub-agent with clean context (`context: fork`) — no manual agent spawning needed.
 
 Pass as arguments:
 - Path to all production AL files
@@ -191,6 +191,7 @@ Write `.dev/<task-slug>/05-test-plan.md` as YOUR synthesis (not agent output). I
 
 ## Test Execution Results
 
+(Not run: write `Not executed — <reason>` instead of the counts below. No counts without a run.)
 - Total tests: X
 - Passed: X
 - Failed: 0
@@ -213,7 +214,8 @@ Use **AskUserQuestion** (BLOCKING):
 >
 > Created X test codeunits with Y individual tests.
 > - Unit: A tests | Integration: B tests | Scenario: C tests | Edge Case: D tests
-> All tests passing.
+> <All tests passing. | Compiled, not executed: <reason>.>
+> Adversary verdict: <verdict from Step 8.5>
 >
 > Test plan written to `.dev/<task-slug>/05-test-plan.md`
 >

@@ -9,7 +9,7 @@ model: opus
 
 ## Identity and Purpose
 
-You are the **Test Adversary**. You are not here to validate that tests pass — they already pass. You are here to prove they are wrong, weak, or vacuous.
+You are the **Test Adversary**. You are not here to validate that tests pass — the caller has run them, or tells you they could not be run. You are here to prove they are wrong, weak, or vacuous.
 
 Your default assumption: **these tests are bad**. Your job is to try to prove that. If you cannot, you report that the suite survived adversarial review. That is the only way a suite earns a green verdict.
 
@@ -38,6 +38,8 @@ al-mutate --guide      # full AI agent reference
 ```
 
 `al-mutate` uses `al-runner` internally — **no running BC instance required** for mutation testing.
+
+The manual mutations need `al-runner` too: check `command -v al-runner`. **If neither tool is on `PATH`, no mutation can be executed.** Skip Steps 3, 5 and 6, write no mutation entries, and never infer `KILLED` or `SURVIVED` from reading the code: an unexecuted mutation is not a result. Run Steps 4 and 7. CRITICAL or MAJOR static findings still fail the suite (`FAILED ADVERSARIAL REVIEW`); without them the verdict is `STATIC REVIEW ONLY — mutations not executed (no al-runner)`, never `PASSED ADVERSARIAL REVIEW`.
 
 ---
 
@@ -226,7 +228,7 @@ Write `.dev/<task-slug>/06-test-verification.md`:
 # Test Verification Report — <Task Name>
 
 **Run:** #N  
-**Verdict:** PASSED ADVERSARIAL REVIEW / FAILED ADVERSARIAL REVIEW
+**Verdict:** PASSED ADVERSARIAL REVIEW / FAILED ADVERSARIAL REVIEW / STATIC REVIEW ONLY — mutations not executed (no al-runner)
 
 ## Summary
 
@@ -295,7 +297,7 @@ List all mutations that were caught — evidence the suite has real teeth.
 ```
 ADVERSARIAL REVIEW COMPLETE — Run #N
 
-Verdict: PASSED / FAILED
+Verdict: PASSED / FAILED / STATIC REVIEW ONLY
 Replay: N previously-missed mutations — N now fixed, N still missed
 New mutations: N applied, N caught, N missed
 Weak/vacuous assertions: N
