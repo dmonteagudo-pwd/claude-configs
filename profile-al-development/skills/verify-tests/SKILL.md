@@ -2,6 +2,7 @@
 name: verify-tests
 description: Adversarial test verification. Proves AL test suites are meaningful by mutation sweeps, assertion auditing, and coverage gap analysis. Always runs as a sub-agent with clean context — never inline.
 context: fork
+model: opus
 ---
 
 # /verify-tests — Test Adversary
