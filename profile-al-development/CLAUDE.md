@@ -82,7 +82,9 @@ The files in this plugin's `rules/` directory hold the standing AL guardrails. C
 
 Resolve `rules/` against this plugin's own directory. If a project overlay (e.g. `profile-bc-prodware`) supplies stricter AL rules, those take precedence.
 
-## Compact instructions
+## Compact instructions (template)
+
+This section has no effect here, because Claude Code does not load this file. To apply it, copy it into the project's own `CLAUDE.md`.
 
 When `/compact` or auto-compact runs, preserve these in the summary:
 - Active task slug (`.dev/<task-slug>/`) and its current phase (`/interview`, `/plan`, `/develop`, `/test`, `/fix`).
