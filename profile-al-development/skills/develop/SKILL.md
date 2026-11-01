@@ -82,7 +82,7 @@ When all development is complete, review proceeds along **two orthogonal axes** 
 
 ### Axis 2: Technical Standards (Engineering Quality)
 - **Question:** Is the code built right according to BC/AL platform best practices?
-- **Source of truth:** AL rules (`rules/al-*.md`, `rules/pwe-coding-guidelines.md` and every `pwe-coding-*` topic file whose index row matches the diff) and platform standards.
+- **Source of truth:** AL rules (this plugin's `rules/al-*.md`, plus the project overlay's coding guidelines when one is installed — e.g. `profile-bc-prodware/rules/pwe-coding-guidelines.md` and every `pwe-coding-*` topic file whose index row matches the diff) and platform standards.
 - 4 specialist reviewer agents are spawned simultaneously using the **Agent tool**:
   1. **Security Reviewer**
   2. **AL Expert Reviewer**

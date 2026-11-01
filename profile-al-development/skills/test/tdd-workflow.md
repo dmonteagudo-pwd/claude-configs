@@ -35,7 +35,7 @@ The goal is to write a test that fails for the RIGHT reason (missing logic, not 
    ```bash
    <project test route> -o .dev/<task-slug>/test-results-red.txt   # e.g. /run-tests (bc-test), when installed
    ```
-7. **HARD STOP** — Use AskUserQuestion:
+7. **HARD STOP** — Gate (rule 5): ask with AskUserQuestion in the main conversation. A developer agent ends its turn with this report instead:
 
    > **RED Phase Complete**
    >
@@ -68,7 +68,7 @@ The goal is to write the MINIMUM production code that makes the test pass. No mo
    ```bash
    <project build route> && <project publish route> && <project test route> -o .dev/<task-slug>/test-results-green.txt
    ```
-4. **HARD STOP** — Use AskUserQuestion:
+4. **HARD STOP** — Gate (rule 5): ask with AskUserQuestion in the main conversation. A developer agent ends its turn with this report instead:
 
    > **GREEN Phase Complete**
    >
@@ -109,7 +109,7 @@ The goal is to improve code quality WITHOUT changing behavior. All tests must co
    <project build route> && <project publish route> && <project test route> -o .dev/<task-slug>/test-results-refactor.txt
    ```
 
-5. **HARD STOP** — Use AskUserQuestion:
+5. **HARD STOP** — Gate (rule 5): ask with AskUserQuestion in the main conversation. A developer agent ends its turn with this report instead:
 
    > **REFACTOR Phase Complete**
    >
