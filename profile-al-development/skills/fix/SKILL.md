@@ -76,7 +76,7 @@ Classified as TIER {n}: {one-line reason}. Applying now. | Delegating now.
 After the edit or the agent completes:
 
 1. Confirm compilation passes through the project's build route.
-2. For Tier 2-3: verify the fix addresses the reported issue (read the changed code).
+2. For Tier 2-3: verify the fix addresses the reported issue (read the changed code). If the bug is behavioural and the module has a test app, add a regression test that fails without the fix and compile the test app as well; if there is no test app, list the missing test under *Not verified*.
 3. Report the result to the user:
    - Files changed
    - What was fixed
@@ -84,7 +84,7 @@ After the edit or the agent completes:
    - Evidence: the exact build/test command run and its decisive output line
    - Decisions taken without instruction: defaults, scope, interpretation (or "none")
    - Not verified: what the build and review did not prove (runtime behaviour, tests not run, upgrade, permissions…)
-   - Any follow-up recommendations (e.g., "consider adding a test for this")
+   - Any follow-up recommendations (e.g., "create a test app for this module")
 
 ### Step 4: Clean Up (Tier 3 only)
 
