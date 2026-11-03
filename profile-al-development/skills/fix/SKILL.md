@@ -81,6 +81,9 @@ After the edit or the agent completes:
    - Files changed
    - What was fixed
    - Compilation status
+   - Evidence: the exact build/test command run and its decisive output line
+   - Decisions taken without instruction: defaults, scope, interpretation (or "none")
+   - Not verified: what the build and review did not prove (runtime behaviour, tests not run, upgrade, permissions…)
    - Any follow-up recommendations (e.g., "consider adding a test for this")
 
 ### Step 4: Clean Up (Tier 3 only)

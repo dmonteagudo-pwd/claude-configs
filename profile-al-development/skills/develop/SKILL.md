@@ -181,6 +181,9 @@ Use **AskUserQuestion** to present the results:
 > **Objects created:** <count>
 > **Review status:** <All clear / N issues for your decision>
 > **Compilation:** <Clean / Issues>
+> **Evidence:** <exact build/test command run + its decisive output line>
+> **Decisions taken without instruction:** <defaults, scope, interpretation — or "none">
+> **Not verified:** <what build and review did not prove: runtime behaviour, tests not run, upgrade, permissions…>
 >
 > <If issues for decision, list them briefly>
 >
